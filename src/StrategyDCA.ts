@@ -14,7 +14,6 @@ export class StrategyDCA {
       if (isStartOfMonth) {
         account.EUR.deposit(100);
         this.#amountPerDay = Decimal.div(account.EUR.balance, dayjs(date).daysInMonth()).toDecimalPlaces(2).toNumber();
-        console.log(`New month ${date.toISOString()}, new amount per day: ${this.#amountPerDay}`);
       }
 
       sender.putOrder({

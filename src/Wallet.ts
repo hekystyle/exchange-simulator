@@ -31,7 +31,16 @@ export class Wallet {
   toJSON() {
     return {
       currency: this.currency,
-      balance: this.#balance,
+      balance: this.formatBalance(),
     };
+  }
+
+  private formatBalance() {
+    switch (this.currency) {
+      case 'BTC':
+        return new Decimal(this.#balance).toDecimalPlaces(8).toNumber();
+      default:
+        return this.#balance;
+    }
   }
 }

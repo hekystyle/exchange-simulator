@@ -6,7 +6,7 @@ type Wallets = {
   [Currency in 'EUR' | 'BTC']: Wallet;
 };
 
-interface Account extends Wallets {
+export interface Account extends Wallets {
   owner: Owner;
 }
 
