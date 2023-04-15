@@ -105,8 +105,8 @@ export class SimulatedExchange extends TypedEventEmitter<Events> implements Exch
 
   // eslint-disable-next-line class-methods-use-this
   private tryFillOrder(order: Order, price: number) {
-    if (order instanceof LimitOrder && order.config.limitPrice <= price) {
-      order.fill(price);
+    if (order instanceof LimitOrder && order.config.limitPrice >= price) {
+      order.fill();
     }
   }
 }

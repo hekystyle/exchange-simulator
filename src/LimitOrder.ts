@@ -23,11 +23,11 @@ export class LimitOrder {
     return this.#status;
   }
 
-  fill(price: number): this {
+  fill(): this {
     if (this.#status !== 'open') {
       throw new Error('Order needs to be open to be filled');
     }
-    const buyingAmount = Decimal.div(this.config.sellingAmount, price).toNumber();
+    const buyingAmount = Decimal.div(this.config.sellingAmount, this.config.limitPrice).toNumber();
     this.buyingWallet.deposit(buyingAmount);
     this.#status = 'filled';
     return this;
