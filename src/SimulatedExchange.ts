@@ -52,6 +52,8 @@ export class SimulatedExchange extends TypedEventEmitter<Events> implements Exch
 
   putOrder(orderConfig: OrderConfig) {
     const account = this.accounts.get(orderConfig.owner);
+    const buyingWallet = account[orderConfig.pair.base];
+    const sellingWallet = account[orderConfig.pair.quote];
 
     let order: Order | undefined;
     switch (orderConfig.type) {
@@ -60,8 +62,8 @@ export class SimulatedExchange extends TypedEventEmitter<Events> implements Exch
         account[orderConfig.pair.base].deposit(orderConfig.sellingAmount / this.currentPrice);
         break;
       case 'limit':
-        order = new LimitOrder(orderConfig);
-        this.handleOrder(order, this.currentPrice);
+        order = new LimitOrder(orderConfig, sellingWallet, buyingWallet);
+        this.tryFillOrder(order, this.currentPrice);
         this.#orders.push(order);
         break;
       default:
@@ -72,7 +74,9 @@ export class SimulatedExchange extends TypedEventEmitter<Events> implements Exch
   }
 
   cancelAllOrders(owner: string): this {
-    this.#orders.filter(order => order.config.owner === owner).forEach(order => order.cancel());
+    this.#orders
+      .filter(order => order.config.owner === owner && order.status === 'open')
+      .forEach(order => order.cancel());
     return this;
   }
 
@@ -96,12 +100,13 @@ export class SimulatedExchange extends TypedEventEmitter<Events> implements Exch
 
   private handlePriceChange(price: number) {
     this.#currentPrice = price;
-    this.#orders.forEach(order => this.handleOrder(order, price));
+    this.#orders.forEach(order => order.status === 'open' && this.tryFillOrder(order, price));
   }
 
-  private handleOrder(order: Order, price: number) {
-    if (order instanceof LimitOrder && order.status === 'open' && order.config.limitPrice <= price) {
-      this.accounts.get(order.config.owner)[order.config.pair.quote].deposit(order.fill(price).buyingAmount);
+  // eslint-disable-next-line class-methods-use-this
+  private tryFillOrder(order: Order, price: number) {
+    if (order instanceof LimitOrder && order.config.limitPrice <= price) {
+      order.fill(price);
     }
   }
 }

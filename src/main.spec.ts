@@ -18,7 +18,7 @@ it('should execute', async () => {
     },
     {
       BTC: {
-        balance: 0.05362107,
+        balance: 0.0525354,
         currency: 'BTC',
       },
       EUR: {

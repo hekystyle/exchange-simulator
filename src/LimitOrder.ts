@@ -1,5 +1,6 @@
 import Decimal from 'decimal.js';
 import type { BaseOrderConfig } from './SimulatedExchange';
+import type { Wallet } from './Wallet';
 
 export interface LimitOrderConfig extends BaseOrderConfig {
   type: 'limit';
@@ -9,15 +10,13 @@ export interface LimitOrderConfig extends BaseOrderConfig {
 export class LimitOrder {
   #status: 'open' | 'filled' | 'canceled' = 'open';
 
-  #buyingAmount: number | undefined = undefined;
-
-  constructor(public readonly config: LimitOrderConfig) {}
-
-  get buyingAmount() {
-    if (this.#buyingAmount === undefined) {
-      throw new Error('Order needs to be filled first');
-    }
-    return this.#buyingAmount;
+  constructor(
+    public readonly config: LimitOrderConfig,
+    public readonly sellingWallet: Wallet,
+    public readonly buyingWallet: Wallet,
+  ) {
+    // reserve funds
+    this.sellingWallet.withdraw(config.sellingAmount);
   }
 
   get status() {
@@ -25,13 +24,22 @@ export class LimitOrder {
   }
 
   fill(price: number): this {
-    this.#buyingAmount = Decimal.div(this.config.sellingAmount, price).toNumber();
+    if (this.#status !== 'open') {
+      throw new Error('Order needs to be open to be filled');
+    }
+    const buyingAmount = Decimal.div(this.config.sellingAmount, price).toNumber();
+    this.buyingWallet.deposit(buyingAmount);
     this.#status = 'filled';
     return this;
   }
 
   cancel(): this {
+    if (this.#status !== 'open') {
+      throw new Error('Order needs to be open to be canceled');
+    }
     this.#status = 'canceled';
+    // return reserved funds
+    this.sellingWallet.deposit(this.config.sellingAmount);
     return this;
   }
 }
