@@ -50,7 +50,7 @@ jobs:
 
       - run: yarn run lint
 
-  build:
+  check-types:
     needs: [install]
     runs-on: ubuntu-22.04
     steps:
@@ -67,7 +67,7 @@ jobs:
           path: node_modules
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
-      - run: yarn build
+      - run: yarn check-types
 
   test:
     needs: [install]
@@ -86,7 +86,7 @@ jobs:
           path: node_modules
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
-      - run: yarn run test
+      - run: yarn test
 
       - uses: codecov/codecov-action@v3
         with:

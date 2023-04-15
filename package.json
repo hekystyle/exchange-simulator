@@ -8,6 +8,8 @@
   "license": "MIT",
   "packageManager": "yarn@3.5.0",
   "scripts": {
+    "check-types": "tsc --noEmit",
+    "build": "tsc --build tsconfig.build.json",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "test": "vitest"
