@@ -16,15 +16,15 @@ jobs:
   install:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3.5
+      - uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v3.6
+      - uses: actions/setup-node@v3
         with:
           node-version: lts/*
           cache: "yarn"
 
       - name: Restore node_modules
-        uses: actions/cache@v3.3
+        uses: actions/cache@v3
         with:
           path: node_modules
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
@@ -35,15 +35,15 @@ jobs:
     needs: [install]
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3.5
+      - uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v3.6
+      - uses: actions/setup-node@v3
         with:
           node-version: lts/*
           cache: "yarn"
 
       - name: Restore node_modules
-        uses: actions/cache@v3.3
+        uses: actions/cache@v3
         with:
           path: node_modules
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
@@ -54,15 +54,15 @@ jobs:
     needs: [install]
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3.5
+      - uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v3.6
+      - uses: actions/setup-node@v3
         with:
           node-version: lts/*
           cache: "yarn"
 
       - name: Restore node_modules
-        uses: actions/cache@v3.3
+        uses: actions/cache@v3
         with:
           path: node_modules
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
@@ -73,15 +73,15 @@ jobs:
     needs: [install]
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3.5
+      - uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v3.6
+      - uses: actions/setup-node@v3
         with:
           node-version: lts/*
           cache: "yarn"
 
       - name: Restore node_modules
-        uses: actions/cache@v3.3
+        uses: actions/cache@v3
         with:
           path: node_modules
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
