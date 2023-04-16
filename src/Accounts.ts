@@ -1,26 +1,12 @@
-import { Wallet } from './Wallet';
-
-export type Owner = string;
-
-type Wallets = {
-  [Currency in 'EUR' | 'BTC']: Wallet;
-};
-
-export interface Account extends Wallets {
-  owner: Owner;
-}
+import { Account, Owner } from './Account';
 
 export class Accounts {
-  #accounts: Map<Owner, Account> = new Map();
+  #accounts = new Map<Owner, Account>();
 
   open(owner: Owner): Account {
     if (this.#accounts.has(owner)) throw new Error(`Account already exists for ${owner}`);
 
-    const account: Account = {
-      owner,
-      EUR: new Wallet('EUR'),
-      BTC: new Wallet('BTC'),
-    };
+    const account = new Account(owner);
 
     this.#accounts.set(owner, account);
 
@@ -34,10 +20,6 @@ export class Accounts {
   }
 
   toJSON() {
-    return Array.from(this.#accounts.values()).map(account => ({
-      owner: account.owner,
-      EUR: account.EUR.toJSON(),
-      BTC: account.BTC.toJSON(),
-    }));
+    return Array.from(this.#accounts.values()).map(account => account.toJSON());
   }
 }
