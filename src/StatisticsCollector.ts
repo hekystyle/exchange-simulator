@@ -10,15 +10,20 @@ interface Point {
   y: Y;
 }
 
-interface Serie {
-  id: string;
+interface Metadata {
+  owner: string;
+  currency: string;
+}
+
+export interface Serie {
+  meta: Metadata;
   data: Point[];
 }
 
 export class StatisticsCollector {
-  private DCA_BTC: Serie = { id: 'DCA BTC', data: [] };
+  private DCA_BTC: Serie = { meta: { owner: 'DCA', currency: 'BTC' }, data: [] };
 
-  private DCA_EUR: Serie = { id: 'DCA EUR', data: [] };
+  private DCA_EUR: Serie = { meta: { owner: 'DCA', currency: 'EUR' }, data: [] };
 
   constructor(
     @Inject(SimulatedExchange)
@@ -30,12 +35,12 @@ export class StatisticsCollector {
   setup(): this {
     this.exchange.on('dayClosed', (sender, date) => {
       this.DCA_BTC.data.push({
-        x: sender.accounts.get(StrategyDCA.name).BTC.balance,
-        y: date.getTime(),
+        x: date.getTime(),
+        y: sender.accounts.get(StrategyDCA.name).BTC.balance,
       });
       this.DCA_EUR.data.push({
-        x: sender.accounts.get(StrategyDCA.name).EUR.balance,
-        y: date.getTime(),
+        x: date.getTime(),
+        y: sender.accounts.get(StrategyDCA.name).EUR.balance,
       });
     });
     return this;

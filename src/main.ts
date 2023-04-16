@@ -5,7 +5,11 @@ import { SimulatedExchange } from './SimulatedExchange.js';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    cors: {
+      origin: /127\.0\.0\.1:5173$/,
+    },
+  });
   app.enableShutdownHooks();
   await app.listen(3000);
   app.get(SimulatedExchange).simulate(BTCEUR_YEAR_DAILY_CANDLES);
