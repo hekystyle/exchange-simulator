@@ -9,6 +9,7 @@ type Order = MarketOrder | LimitOrder;
 
 type OrderConfig = MarketOrderConfig | LimitOrderConfig;
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type Events = {
   dayOpened: [Exchange, Date];
   simulationFinished: [Exchange];
