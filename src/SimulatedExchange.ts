@@ -1,15 +1,11 @@
 import dayjs from 'dayjs';
 import { Accounts } from './Accounts';
 import { LimitOrder, LimitOrderConfig } from './LimitOrder';
+import { MarketOrder, MarketOrderConfig } from './MarketOrder';
 import { TypedEventEmitter } from './TypedEventEmitter';
-import type { BaseOrderConfig } from './BaseOrder';
 import type { Candle } from './data';
 
-type Order = LimitOrder;
-
-interface MarketOrderConfig extends BaseOrderConfig {
-  type: 'market';
-}
+type Order = MarketOrder | LimitOrder;
 
 type OrderConfig = MarketOrderConfig | LimitOrderConfig;
 
@@ -47,17 +43,17 @@ export class SimulatedExchange extends TypedEventEmitter<Events> implements Exch
     let order: Order | undefined;
     switch (orderConfig.type) {
       case 'market':
-        account[orderConfig.pair.quote].withdraw(orderConfig.sellingAmount);
-        account[orderConfig.pair.base].deposit(orderConfig.sellingAmount / this.currentPrice);
+        order = new MarketOrder(orderConfig, sellingWallet, buyingWallet);
         break;
       case 'limit':
         order = new LimitOrder(orderConfig, sellingWallet, buyingWallet);
-        this.tryFillOrder(order, this.currentPrice);
-        this.#orders.push(order);
         break;
       default:
         throw new Error(`Unknown order type: ${(orderConfig as OrderConfig).type}`);
     }
+
+    this.tryFillOrder(order, this.currentPrice);
+    this.#orders.push(order);
 
     return this;
   }
@@ -94,8 +90,14 @@ export class SimulatedExchange extends TypedEventEmitter<Events> implements Exch
 
   // eslint-disable-next-line class-methods-use-this
   private tryFillOrder(order: Order, price: number) {
-    if (order instanceof LimitOrder && order.config.limitPrice >= price) {
-      order.fill();
+    if (order instanceof MarketOrder) {
+      order.fill(price);
+    } else if (order instanceof LimitOrder) {
+      if (order.config.limitPrice >= price) {
+        order.fill();
+      }
+    } else {
+      throw new Error(`Unknown order type: ${order as string}`);
     }
   }
 }
