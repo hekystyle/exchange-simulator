@@ -2,21 +2,10 @@ import dayjs from 'dayjs';
 import { Accounts } from './Accounts';
 import { LimitOrder, LimitOrderConfig } from './LimitOrder';
 import { TypedEventEmitter } from './TypedEventEmitter';
+import type { BaseOrderConfig } from './BaseOrder';
 import type { Candle } from './data';
 
 type Order = LimitOrder;
-
-interface TradingPair<T extends [string, string]> {
-  base: T[0];
-  quote: T[1];
-}
-
-export interface BaseOrderConfig {
-  type: string;
-  owner: string;
-  pair: TradingPair<['BTC', 'EUR']>;
-  sellingAmount: number;
-}
 
 interface MarketOrderConfig extends BaseOrderConfig {
   type: 'market';
