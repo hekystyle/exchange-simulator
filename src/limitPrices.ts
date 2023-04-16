@@ -1,4 +1,4 @@
-import Decimal from 'decimal.js';
+import { Decimal } from 'decimal.js';
 
 export const limitPrices = (currentPrice: number, availableFunds: number, amountPerOrder: number) => {
   const decreasedPrice = Decimal.mul(currentPrice, 0.7); // decrease price by 30%

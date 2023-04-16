@@ -1,5 +1,5 @@
-import Decimal from 'decimal.js';
-import type { Wallet } from './Wallet';
+import { Decimal } from 'decimal.js';
+import type { Wallet } from './Wallet.js';
 
 interface TradingPair<T extends [string, string]> {
   base: T[0];

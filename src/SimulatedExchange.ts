@@ -1,9 +1,9 @@
 import dayjs from 'dayjs';
-import { Accounts } from './Accounts';
-import { LimitOrder, LimitOrderConfig } from './LimitOrder';
-import { MarketOrder, MarketOrderConfig } from './MarketOrder';
-import { TypedEventEmitter } from './TypedEventEmitter';
-import type { Candle } from './data';
+import { Accounts } from './Accounts.js';
+import { LimitOrder, LimitOrderConfig } from './LimitOrder.js';
+import { MarketOrder, MarketOrderConfig } from './MarketOrder.js';
+import { TypedEventEmitter } from './TypedEventEmitter.js';
+import type { Candle } from './data.js';
 
 type Order = MarketOrder | LimitOrder;
 

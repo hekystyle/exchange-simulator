@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
-import Decimal from 'decimal.js';
-import { limitPrices } from './limitPrices';
-import type { Exchange } from './SimulatedExchange';
+import { Decimal } from 'decimal.js';
+import { limitPrices } from './limitPrices.js';
+import type { Exchange } from './SimulatedExchange.js';
 
 export class StrategyEnhancedDCA {
   constructor(public readonly sellingAmountPerOrder: number) {}

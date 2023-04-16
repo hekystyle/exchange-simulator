@@ -1,8 +1,26 @@
-import { it, expect } from 'vitest';
-import { runSimulation } from './main';
+import { Test } from '@nestjs/testing';
+import { it, expect, beforeAll } from 'vitest';
+import { AppModule } from './app.module.js';
+import { BTCEUR_YEAR_DAILY_CANDLES } from './data.js';
+import { SimulatedExchange } from './SimulatedExchange.js';
+import type { INestApplication } from '@nestjs/common';
+
+let app: INestApplication;
+
+beforeAll(async () => {
+  const module = await Test.createTestingModule({
+    imports: [AppModule],
+  }).compile();
+
+  app = module.createNestApplication();
+  await app.init();
+  return () => app.close();
+});
 
 it('should execute', async () => {
-  const { exchange } = await runSimulation();
+  const exchange = app.get(SimulatedExchange);
+
+  exchange.simulate(BTCEUR_YEAR_DAILY_CANDLES);
 
   expect(exchange.accounts.toJSON()).toStrictEqual([
     {

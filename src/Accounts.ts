@@ -1,4 +1,4 @@
-import { Account, Owner } from './Account';
+import { Account, Owner } from './Account.js';
 
 export class Accounts {
   #accounts = new Map<Owner, Account>();

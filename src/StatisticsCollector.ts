@@ -1,5 +1,6 @@
-import { StrategyDCA } from './StrategyDCA';
-import type { Exchange } from './SimulatedExchange';
+import { Inject } from '@nestjs/common';
+import { Exchange, SimulatedExchange } from './SimulatedExchange.js';
+import { StrategyDCA } from './StrategyDCA.js';
 
 type X = number;
 type Y = number;
@@ -19,7 +20,12 @@ export class StatisticsCollector {
 
   private DCA_EUR: Serie = { id: 'DCA EUR', data: [] };
 
-  constructor(private exchange: Exchange) {}
+  constructor(
+    @Inject(SimulatedExchange)
+    private readonly exchange: Exchange,
+  ) {
+    this.setup();
+  }
 
   setup(): this {
     this.exchange.on('dayClosed', (sender, date) => {

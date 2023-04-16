@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
-import Decimal from 'decimal.js';
-import type { Exchange } from './SimulatedExchange';
+import { Decimal } from 'decimal.js';
+import type { Exchange } from './SimulatedExchange.js';
 
 export class StrategyDCA {
   #amountPerDay = 0;

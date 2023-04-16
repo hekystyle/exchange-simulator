@@ -1,16 +1,14 @@
-import { BTCEUR_YEAR_DAILY_CANDLES } from './data';
-import { SimulatedExchange } from './SimulatedExchange';
-import { StatisticsCollector } from './StatisticsCollector';
-import { StrategyDCA } from './StrategyDCA';
-import { StrategyEnhancedDCA } from './StrategyEnhancedDCA';
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module.js';
+import { BTCEUR_YEAR_DAILY_CANDLES } from './data.js';
+import { SimulatedExchange } from './SimulatedExchange.js';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 
-export async function runSimulation() {
-  const exchange = new SimulatedExchange();
-  const strategies = [new StrategyDCA(), new StrategyEnhancedDCA(1)];
-  strategies.forEach(strategy => strategy.setup(exchange));
-  new StatisticsCollector(exchange).setup();
-
-  exchange.simulate(BTCEUR_YEAR_DAILY_CANDLES);
-
-  return { exchange };
+async function bootstrap() {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.enableShutdownHooks();
+  await app.listen(3000);
+  app.get(SimulatedExchange).simulate(BTCEUR_YEAR_DAILY_CANDLES);
 }
+// eslint-disable-next-line no-console
+bootstrap().catch(console.error);

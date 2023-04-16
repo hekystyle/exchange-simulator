@@ -1,5 +1,5 @@
-import { BaseOrder, BaseOrderConfig } from './BaseOrder';
-import type { Wallet } from './Wallet';
+import { BaseOrder, BaseOrderConfig } from './BaseOrder.js';
+import type { Wallet } from './Wallet.js';
 
 export interface MarketOrderConfig extends BaseOrderConfig {
   type: 'market';
