@@ -12,6 +12,7 @@ type OrderConfig = MarketOrderConfig | LimitOrderConfig;
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type Events = {
   dayOpened: [Exchange, Date];
+  dayClosed: [Exchange, Date];
   simulationFinished: [Exchange];
 };
 
@@ -79,6 +80,8 @@ export class SimulatedExchange extends TypedEventEmitter<Events> implements Exch
       this.handlePriceChange(candle.high);
       this.handlePriceChange(candle.low);
       this.handlePriceChange(candle.close);
+
+      this.emit('dayClosed', this, date.toDate());
     });
 
     this.emit('simulationFinished', this);
