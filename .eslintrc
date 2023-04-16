@@ -6,6 +6,7 @@
     "airbnb-base",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:@typescript-eslint/strict",
     "airbnb-typescript/base",
     "plugin:prettier/recommended"
   ],
