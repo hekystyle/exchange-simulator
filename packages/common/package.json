@@ -1,0 +1,19 @@
+{
+  "name": "@exchange-simulator/common",
+  "version": "0.0.0",
+  "description": "Common library for exchange simulator",
+  "author": "Tomáš Hekrla <tomas@heky.eu>",
+  "homepage": "https://github.com/hekystyle/exchange-simulator#readme",
+  "license": "ISC",
+  "main": "src/index.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hekystyle/exchange-simulator.git"
+  },
+  "scripts": {
+    "build": "tsc -b ./tsconfig.json"
+  },
+  "bugs": {
+    "url": "https://github.com/hekystyle/exchange-simulator/issues"
+  }
+}

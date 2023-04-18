@@ -1,0 +1,35 @@
+{
+  "name": "@exchange-simulator/frontend",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "type": "module",
+  "repository": "git@github.com:hekystyle/exchange-simulator.git",
+  "author": "Tomáš Heky Hekrla <tomas@heky.eu>",
+  "license": "MIT",
+  "packageManager": "yarn@3.5.0",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "scripts": {
+    "build": "tsc --build tsconfig.json && vite build",
+    "check-types": "tsc --noEmit",
+    "serve": "vite preview",
+    "start": "vite"
+  },
+  "dependencies": {
+    "@exchange-simulator/common": "*",
+    "@tanstack/react-query": "4.29.3",
+    "highcharts": "10.3.3",
+    "highcharts-react-official": "3.2.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "18.0.35",
+    "@types/react-dom": "18.0.11",
+    "@vitejs/plugin-react": "3.1.0",
+    "typescript": "5.0.3",
+    "vite": "4.2.1",
+    "vite-tsconfig-paths": "4.2.0"
+  }
+}

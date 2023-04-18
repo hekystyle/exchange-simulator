@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Chart } from './Chart.jsx';
-import type { Metadata, Serie, Source } from '../StatisticsCollector.js';
+import type { Metadata, Serie, Source } from '@exchange-simulator/common';
 import type { SeriesLineOptions } from 'highcharts';
 import type { FC } from 'react';
 

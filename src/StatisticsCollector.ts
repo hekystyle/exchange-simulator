@@ -2,27 +2,7 @@ import { Inject } from '@nestjs/common';
 import { Decimal } from 'decimal.js';
 import stableJsonStringify from 'json-stable-stringify';
 import { Exchange, SimulatedExchange } from './SimulatedExchange.js';
-
-type X = number;
-type Y = number;
-
-interface Point {
-  x: X;
-  y: Y;
-}
-
-export type Source = 'wallet' | 'orders';
-
-export interface Metadata {
-  owner: string;
-  currency: string;
-  source: Source;
-}
-
-export interface Serie {
-  meta: Metadata;
-  data: Point[];
-}
+import type { Metadata, Serie } from '@exchange-simulator/common';
 
 export class StatisticsCollector {
   #series = new Map<string, Serie>();
