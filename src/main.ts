@@ -7,7 +7,7 @@ import type { NestExpressApplication } from '@nestjs/platform-express';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: {
-      origin: /127\.0\.0\.1:5173$/,
+      origin: /(localhost|127\.0\.0\.1):5173$/,
     },
   });
   app.enableShutdownHooks();

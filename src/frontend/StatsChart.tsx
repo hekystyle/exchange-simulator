@@ -25,6 +25,9 @@ export const StatsChart: FC = () => {
         title: {
           text: 'Statistics',
         },
+        tooltip: {
+          shared: true,
+        },
         xAxis: {
           type: 'datetime',
           labels: {

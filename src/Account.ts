@@ -13,6 +13,10 @@ export class Account implements Wallets {
 
   constructor(public readonly owner: Owner) {}
 
+  get wallets() {
+    return [this.EUR, this.BTC];
+  }
+
   toJSON() {
     return {
       owner: this.owner,

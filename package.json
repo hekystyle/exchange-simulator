@@ -33,6 +33,7 @@
     "decimal.js": "10.4.3",
     "highcharts": "10.3.3",
     "highcharts-react-official": "3.2.0",
+    "json-stable-stringify": "1.0.2",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
@@ -41,6 +42,7 @@
     "@nestjs/schematics": "9.1.0",
     "@nestjs/testing": "9.4.0",
     "@tsconfig/node16-strictest-esm": "1.0.3",
+    "@types/json-stable-stringify": "1.0.34",
     "@types/react": "18.0.35",
     "@types/react-dom": "18.0.11",
     "@typescript-eslint/eslint-plugin": "5.57.0",

@@ -1,6 +1,6 @@
 import { Inject } from '@nestjs/common';
+import stableJsonStringify from 'json-stable-stringify';
 import { Exchange, SimulatedExchange } from './SimulatedExchange.js';
-import { StrategyDCA } from './StrategyDCA.js';
 
 type X = number;
 type Y = number;
@@ -21,9 +21,7 @@ export interface Serie {
 }
 
 export class StatisticsCollector {
-  private DCA_BTC: Serie = { meta: { owner: 'DCA', currency: 'BTC' }, data: [] };
-
-  private DCA_EUR: Serie = { meta: { owner: 'DCA', currency: 'EUR' }, data: [] };
+  #series = new Map<string, Serie>();
 
   constructor(
     @Inject(SimulatedExchange)
@@ -34,19 +32,26 @@ export class StatisticsCollector {
 
   setup(): this {
     this.exchange.on('dayClosed', (sender, date) => {
-      this.DCA_BTC.data.push({
-        x: date.getTime(),
-        y: sender.accounts.get(StrategyDCA.name).BTC.balance,
-      });
-      this.DCA_EUR.data.push({
-        x: date.getTime(),
-        y: sender.accounts.get(StrategyDCA.name).EUR.balance,
+      Array.from(sender.accounts).forEach(({ wallets, owner }) => {
+        wallets.forEach(({ balance, currency }) => {
+          this.getOrCreateSerie({ owner, currency }).data.push({ x: date.getTime(), y: balance });
+        });
       });
     });
     return this;
   }
 
   getSeries() {
-    return [this.DCA_BTC, this.DCA_EUR];
+    return Array.from(this.#series.values());
+  }
+
+  private getOrCreateSerie(meta: Metadata): Serie {
+    const key = stableJsonStringify(meta);
+
+    const serie = this.#series.get(key) ?? { meta, data: [] };
+
+    this.#series.set(key, serie);
+
+    return serie;
   }
 }

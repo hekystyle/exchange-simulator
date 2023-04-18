@@ -1,7 +1,11 @@
 import { Account, Owner } from './Account.js';
 
-export class Accounts {
+export class Accounts implements Iterable<Account> {
   #accounts = new Map<Owner, Account>();
+
+  [Symbol.iterator](): Iterator<Account> {
+    return this.#accounts.values();
+  }
 
   open(owner: Owner): Account {
     if (this.#accounts.has(owner)) throw new Error(`Account already exists for ${owner}`);
