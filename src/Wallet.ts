@@ -3,14 +3,16 @@ import { Decimal } from 'decimal.js';
 export class Wallet {
   #balance = 0;
 
-  constructor(public readonly currency: string) {}
+  constructor(public readonly currency: string, initialBalance = 0) {
+    this.#balance = initialBalance;
+  }
 
   public get balance() {
     return this.#balance;
   }
 
   deposit(amount: number) {
-    if (amount < 0) {
+    if (amount <= 0) {
       throw new Error('Amount must be positive');
     }
     this.#balance = Decimal.add(this.#balance, amount).toNumber();
@@ -18,7 +20,7 @@ export class Wallet {
   }
 
   withdraw(amount: number) {
-    if (amount < 0) {
+    if (amount <= 0) {
       throw new Error('Amount must be positive');
     }
     if (this.#balance < amount) {

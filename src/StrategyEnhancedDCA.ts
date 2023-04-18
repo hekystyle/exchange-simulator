@@ -15,12 +15,13 @@ export class StrategyEnhancedDCA {
         sender.cancelAllOrders(account.owner);
 
         // create market order for remaining funds
-        sender.putOrder({
-          type: 'market',
-          owner: account.owner,
-          pair: { base: 'BTC', quote: 'EUR' },
-          sellingAmount: account.EUR.balance,
-        });
+        if (account.EUR.balance > 0)
+          sender.putOrder({
+            type: 'market',
+            owner: account.owner,
+            pair: { base: 'BTC', quote: 'EUR' },
+            sellingAmount: account.EUR.balance,
+          });
 
         // add new funds to EUR account
         account.EUR.deposit(100);
