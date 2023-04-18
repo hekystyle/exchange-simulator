@@ -6,7 +6,7 @@ export class StrategyDCA {
   #amountPerDay = 0;
 
   setup(exchange: Exchange) {
-    const account = exchange.accounts.open(StrategyDCA.name);
+    const account = exchange.accounts.open('DCA');
 
     exchange.on('dayOpened', (sender, date) => {
       const isStartOfMonth = dayjs(date).isSame(dayjs(date).startOf('month'));

@@ -7,7 +7,7 @@ export class StrategyEnhancedDCA {
   constructor(public readonly sellingAmountPerOrder: number) {}
 
   setup(exchange: Exchange) {
-    const account = exchange.accounts.open(StrategyEnhancedDCA.name);
+    const account = exchange.accounts.open('Enhanced DCA');
 
     exchange.on('dayOpened', (sender, date) => {
       const isStartOfMonth = dayjs(date).isSame(dayjs(date).startOf('month'));

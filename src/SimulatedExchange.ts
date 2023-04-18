@@ -7,6 +7,8 @@ import type { Candle } from './data.js';
 
 type Order = MarketOrder | LimitOrder;
 
+type Orders = Order[];
+
 type OrderConfig = MarketOrderConfig | LimitOrderConfig;
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
@@ -19,6 +21,7 @@ type Events = {
 export interface Exchange extends TypedEventEmitter<Events> {
   accounts: Accounts;
   currentPrice: number;
+  orders: Orders;
   putOrder(orderConfig: OrderConfig): this;
   cancelAllOrders(owner: string): this;
 }
@@ -35,6 +38,10 @@ export class SimulatedExchange extends TypedEventEmitter<Events> implements Exch
       throw new Error('Exchange needs to be simulated first');
     }
     return this.#currentPrice;
+  }
+
+  get orders() {
+    return Array.from(this.#orders);
   }
 
   putOrder(orderConfig: OrderConfig) {
