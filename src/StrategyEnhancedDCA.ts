@@ -1,5 +1,4 @@
 import dayjs from 'dayjs';
-import { Decimal } from 'decimal.js';
 import { limitPrices } from './limitPrices.js';
 import type { Exchange } from './SimulatedExchange.js';
 
@@ -29,17 +28,14 @@ export class StrategyEnhancedDCA {
         // create limit orders for new funds
         const { currentPrice } = sender;
         const availableFunds = account.EUR.balance;
-        let remainingFunds = new Decimal(account.EUR.balance);
 
         limitPrices(currentPrice, availableFunds, this.sellingAmountPerOrder).forEach(price => {
-          remainingFunds = remainingFunds.sub(this.sellingAmountPerOrder);
-
           sender.putOrder({
             type: 'limit',
             owner: account.owner,
             pair: { base: 'BTC', quote: 'EUR' },
             limitPrice: price,
-            sellingAmount: Decimal.min(remainingFunds, this.sellingAmountPerOrder).toNumber(),
+            sellingAmount: Math.min(account.EUR.balance, this.sellingAmountPerOrder),
           });
         });
       }
