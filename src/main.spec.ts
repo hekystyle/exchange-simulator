@@ -32,18 +32,18 @@ it('should execute', async () => {
         balance: 0,
         currency: 'EUR',
       },
-      owner: 'StrategyDCA',
+      owner: 'DCA',
     },
     {
       BTC: {
-        balance: 0.0525307,
+        balance: 0.05252607,
         currency: 'BTC',
       },
       EUR: {
         balance: 0,
         currency: 'EUR',
       },
-      owner: 'StrategyEnhancedDCA',
+      owner: 'Enhanced DCA',
     },
   ]);
 });
