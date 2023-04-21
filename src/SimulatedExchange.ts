@@ -15,7 +15,7 @@ type OrderConfig = MarketOrderConfig | LimitOrderConfig;
 type Events = {
   dayOpened: [Exchange, Date];
   dayClosed: [Exchange, Date];
-  simulationFinished: [Exchange];
+  simulationFinished: [Exchange, Date];
 };
 
 export interface Exchange extends TypedEventEmitter<Events> {
@@ -75,9 +75,10 @@ export class SimulatedExchange extends TypedEventEmitter<Events> implements Exch
   }
 
   simulate(candles: Candle[]) {
+    let lastDate = dayjs();
     candles.forEach(candle => {
       const date = dayjs(candle.date);
-
+      lastDate = date;
       date.get('days');
 
       this.handlePriceChange(candle.open);
@@ -91,7 +92,9 @@ export class SimulatedExchange extends TypedEventEmitter<Events> implements Exch
       this.emit('dayClosed', this, date.toDate());
     });
 
-    this.emit('simulationFinished', this);
+    this.orders.filter(order => order.status === 'open').forEach(order => order.cancel());
+
+    this.emit('simulationFinished', this, lastDate.add(1, 'day').toDate());
   }
 
   private handlePriceChange(price: number) {
