@@ -2,7 +2,7 @@
   "root": true,
   "extends": [
     "eslint:recommended",
-    "plugin:node/recommended",
+    "plugin:n/recommended",
     "airbnb",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
@@ -33,7 +33,7 @@
         "newlines-between": "never"
       }
     ],
-    "node/no-missing-import": "off",
+    "n/no-missing-import": "off", // handled by TypeScript
     "@typescript-eslint/return-await": ["error", "always"],
     "@typescript-eslint/member-ordering": ["error"],
     "@typescript-eslint/no-empty-function": ["error", { "allow": ["private-constructors"] }],
@@ -44,7 +44,7 @@
         "namedComponents": "arrow-function",
         "unnamedComponents": "arrow-function"
       }
-    ],
+    ]
   },
   "overrides": [
     {
