@@ -35,7 +35,7 @@
     "json-stable-stringify": "1.0.2"
   },
   "devDependencies": {
-    "@nestjs/cli": "9.4.0",
+    "@nestjs/cli": "9.4.1",
     "@nestjs/schematics": "9.1.0",
     "@nestjs/testing": "9.4.0",
     "@tsconfig/node16-strictest-esm": "1.0.3",
