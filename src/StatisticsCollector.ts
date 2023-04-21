@@ -17,7 +17,7 @@ export class StatisticsCollector {
   setup(): this {
     this.exchange.on('dayClosed', (sender, date) => {
       Array.from(sender.accounts).forEach(({ wallets, owner }) => {
-        wallets.forEach(wallet => {
+        Array.from(wallets).forEach(wallet => {
           const { currency, balance } = wallet;
           this.#getOrCreateSerie({ owner, currency, source: 'wallet' }).data.push({
             x: date.getTime(),

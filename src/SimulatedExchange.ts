@@ -45,9 +45,9 @@ export class SimulatedExchange extends TypedEventEmitter<Events> implements Exch
   }
 
   putOrder(orderConfig: OrderConfig) {
-    const account = this.accounts.get(orderConfig.owner);
-    const buyingWallet = account[orderConfig.pair.base];
-    const sellingWallet = account[orderConfig.pair.quote];
+    const { wallets } = this.accounts.get(orderConfig.owner);
+    const buyingWallet = wallets[orderConfig.pair.base];
+    const sellingWallet = wallets[orderConfig.pair.quote];
 
     let order: Order | undefined;
     switch (orderConfig.type) {
