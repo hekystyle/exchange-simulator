@@ -24,24 +24,28 @@ it('should execute', async () => {
 
   expect(exchange.accounts.toJSON()).toStrictEqual([
     {
-      BTC: {
-        balance: 0.05361503,
-        currency: 'BTC',
-      },
-      EUR: {
-        balance: 0,
-        currency: 'EUR',
+      wallets: {
+        BTC: {
+          balance: 0.05361503,
+          currency: 'BTC',
+        },
+        EUR: {
+          balance: 0,
+          currency: 'EUR',
+        },
       },
       owner: 'DCA',
     },
     {
-      BTC: {
-        balance: 0.05252607,
-        currency: 'BTC',
-      },
-      EUR: {
-        balance: 0,
-        currency: 'EUR',
+      wallets: {
+        BTC: {
+          balance: 0.05252607,
+          currency: 'BTC',
+        },
+        EUR: {
+          balance: 0,
+          currency: 'EUR',
+        },
       },
       owner: 'Enhanced DCA',
     },

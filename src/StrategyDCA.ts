@@ -7,20 +7,21 @@ export class StrategyDCA {
 
   setup(exchange: Exchange) {
     const account = exchange.accounts.open('DCA');
+    const { wallets } = account;
 
     exchange.on('dayOpened', (sender, date) => {
       const isStartOfMonth = dayjs(date).isSame(dayjs(date).startOf('month'));
 
       if (isStartOfMonth) {
-        account.EUR.deposit(100);
-        this.#amountPerDay = Decimal.div(account.EUR.balance, dayjs(date).daysInMonth()).toDecimalPlaces(2).toNumber();
+        wallets.EUR.deposit(100);
+        this.#amountPerDay = Decimal.div(wallets.EUR.balance, dayjs(date).daysInMonth()).toDecimalPlaces(2).toNumber();
       }
 
       sender.putOrder({
         type: 'market',
         pair: { base: 'BTC', quote: 'EUR' },
         owner: account.owner,
-        sellingAmount: Math.min(this.#amountPerDay, account.EUR.balance),
+        sellingAmount: Math.min(this.#amountPerDay, wallets.EUR.balance),
       });
     });
   }

@@ -1,27 +1,20 @@
-import { Wallet } from './Wallet.js';
-
-type Wallets = {
-  [Currency in 'EUR' | 'BTC']: Wallet;
-};
+import { Wallets } from './Wallets.js';
 
 export type Owner = string;
 
-export class Account implements Wallets {
-  EUR = new Wallet('EUR');
-
-  BTC = new Wallet('BTC');
+export class Account {
+  #wallets = new Wallets();
 
   constructor(public readonly owner: Owner) {}
 
-  get wallets() {
-    return [this.EUR, this.BTC];
+  get wallets(): Wallets {
+    return this.#wallets;
   }
 
   toJSON() {
     return {
       owner: this.owner,
-      EUR: this.EUR.toJSON(),
-      BTC: this.BTC.toJSON(),
+      wallets: this.#wallets.toJSON(),
     };
   }
 }
