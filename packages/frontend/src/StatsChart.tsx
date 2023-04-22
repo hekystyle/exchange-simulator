@@ -69,11 +69,14 @@ export const StatsChart: FC = () => {
               },
             },
           ],
-          series: (data ?? []).map<SeriesLineOptions>(serie => ({
+          series: (data ?? []).map<SeriesLineOptions>(({ data: points, meta }) => ({
             type: 'line',
-            name: getSerieName(serie.meta),
-            yAxis: serie.meta.currency,
-            data: serie.data,
+            name: getSerieName(meta),
+            yAxis: meta.currency,
+            data: points,
+            tooltip: {
+              valueDecimals: meta.currency === 'BTC' ? 8 : 2,
+            },
           })),
         }}
       />
