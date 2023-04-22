@@ -15,7 +15,7 @@ export class StatisticsCollector {
   }
 
   setup(): this {
-    this.exchange.on('dayClosed', (sender, date) => {
+    const handler = (sender: Exchange, date: Date) => {
       Array.from(sender.accounts).forEach(({ wallets, owner }) => {
         Array.from(wallets).forEach(wallet => {
           const { currency, balance } = wallet;
@@ -37,7 +37,10 @@ export class StatisticsCollector {
           });
         });
       });
-    });
+    };
+
+    this.exchange.on('dayOpened', handler);
+    this.exchange.on('simulationFinished', handler);
     return this;
   }
 
