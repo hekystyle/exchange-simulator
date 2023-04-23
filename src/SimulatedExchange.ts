@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import { Accounts } from './Accounts.js';
 import { LimitOrder, LimitOrderConfig } from './LimitOrder.js';
+import { Market } from './Market.js';
 import { MarketOrder, MarketOrderConfig } from './MarketOrder.js';
 import { TypedEventEmitter } from './TypedEventEmitter.js';
 import type { Candle } from './data.js';
@@ -13,31 +14,31 @@ type OrderConfig = MarketOrderConfig | LimitOrderConfig;
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type Events = {
-  dayOpened: [Exchange, Date];
-  dayClosed: [Exchange, Date];
+  tick: [Exchange, Date];
+  simulationFinishing: [Exchange];
   simulationFinished: [Exchange, Date];
 };
 
 export interface Exchange extends TypedEventEmitter<Events> {
   accounts: Accounts;
-  currentPrice: number;
   orders: Orders;
   putOrder(orderConfig: OrderConfig): this;
   cancelAllOrders(owner: string): this;
+  market(pair: 'BTCEUR'): Market;
 }
 
 export class SimulatedExchange extends TypedEventEmitter<Events> implements Exchange {
   public readonly accounts = new Accounts();
 
-  #currentPrice: number | undefined = undefined;
-
   #orders: Order[] = [];
 
-  get currentPrice() {
-    if (!this.#currentPrice) {
-      throw new Error('Exchange needs to be simulated first');
-    }
-    return this.#currentPrice;
+  #markets = new Map<string, Market>();
+
+  #simulationFinished = false;
+
+  constructor() {
+    super();
+    this.#markets.set('BTCEUR', new Market('BTCEUR'));
   }
 
   get orders() {
@@ -45,6 +46,10 @@ export class SimulatedExchange extends TypedEventEmitter<Events> implements Exch
   }
 
   putOrder(orderConfig: OrderConfig) {
+    if (this.#simulationFinished) {
+      throw new Error('Simulation is already finished');
+    }
+    const market = this.market(`${orderConfig.pair.base}${orderConfig.pair.quote}` as const);
     const { wallets } = this.accounts.get(orderConfig.owner);
     const buyingWallet = wallets[orderConfig.pair.base];
     const sellingWallet = wallets[orderConfig.pair.quote];
@@ -61,7 +66,7 @@ export class SimulatedExchange extends TypedEventEmitter<Events> implements Exch
         throw new Error(`Unknown order type: ${(orderConfig as OrderConfig).type}`);
     }
 
-    this.tryFillOrder(order, this.currentPrice);
+    this.tryFillOrder(order, market.currentPrice);
     this.#orders.push(order);
 
     return this;
@@ -74,32 +79,53 @@ export class SimulatedExchange extends TypedEventEmitter<Events> implements Exch
     return this;
   }
 
-  simulate(candles: Candle[]) {
+  simulate({ candles, pair }: { candles: Candle[]; pair: 'BTCEUR' }) {
     let lastDate = dayjs();
+    const market = this.market(pair);
     candles.forEach(candle => {
       const date = dayjs(candle.date);
       lastDate = date;
-      date.get('days');
 
-      this.handlePriceChange(candle.open);
+      this.emit('tick', this, date.toDate());
 
-      this.emit('dayOpened', this, date.toDate());
+      market.open(candle.open, date.toDate());
+      this.handlePriceChange(market);
 
-      this.handlePriceChange(candle.high);
-      this.handlePriceChange(candle.low);
-      this.handlePriceChange(candle.close);
+      market.changePrice(candle.high);
+      this.handlePriceChange(market);
 
-      this.emit('dayClosed', this, date.toDate());
+      market.changePrice(candle.low);
+      this.handlePriceChange(market);
+
+      market.changePrice(candle.close);
+      this.handlePriceChange(market);
+
+      market.close();
     });
+
+    this.emit('simulationFinishing', this);
 
     this.orders.filter(order => order.status === 'open').forEach(order => order.cancel());
 
+    this.#simulationFinished = true;
     this.emit('simulationFinished', this, lastDate.add(1, 'day').toDate());
   }
 
-  private handlePriceChange(price: number) {
-    this.#currentPrice = price;
-    this.#orders.forEach(order => order.status === 'open' && this.tryFillOrder(order, price));
+  public market(pair: 'BTCEUR'): Market {
+    const market = this.#markets.get(pair);
+    if (!market) {
+      throw new Error(`Market for pair ${pair} was not found`);
+    }
+    return market;
+  }
+
+  private handlePriceChange(market: Market) {
+    this.#orders.forEach(
+      order =>
+        order.status === 'open' &&
+        market.name === (`${order.config.pair.base}${order.config.pair.quote}` as const) &&
+        this.tryFillOrder(order, market.currentPrice),
+    );
   }
 
   // eslint-disable-next-line class-methods-use-this

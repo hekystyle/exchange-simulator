@@ -12,7 +12,10 @@ async function bootstrap() {
   });
   app.enableShutdownHooks();
   await app.listen(3000);
-  app.get(SimulatedExchange).simulate(BTCEUR_YEAR_DAILY_CANDLES);
+  app.get(SimulatedExchange).simulate({
+    pair: 'BTCEUR',
+    candles: BTCEUR_YEAR_DAILY_CANDLES,
+  });
 }
 // eslint-disable-next-line no-console
 bootstrap().catch(console.error);

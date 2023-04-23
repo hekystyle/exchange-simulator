@@ -20,7 +20,10 @@ beforeAll(async () => {
 it('should execute', async () => {
   const exchange = app.get(SimulatedExchange);
 
-  exchange.simulate(BTCEUR_YEAR_DAILY_CANDLES);
+  exchange.simulate({
+    pair: 'BTCEUR',
+    candles: BTCEUR_YEAR_DAILY_CANDLES,
+  });
 
   expect(exchange.accounts.toJSON()).toStrictEqual([
     {

@@ -39,7 +39,7 @@ export class StatisticsCollector {
       });
     };
 
-    this.exchange.on('dayOpened', handler);
+    this.exchange.on('tick', handler);
     this.exchange.on('simulationFinished', handler);
     return this;
   }

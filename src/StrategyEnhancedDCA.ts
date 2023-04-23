@@ -9,15 +9,16 @@ export class StrategyEnhancedDCA {
     const account = exchange.accounts.open('Enhanced DCA');
     const { wallets } = account;
 
-    exchange.on('dayOpened', (sender, date) => {
+    exchange.market('BTCEUR').on('opened', market => {
+      const date = market.currentDate;
       const isStartOfMonth = dayjs(date).isSame(dayjs(date).startOf('month'));
 
       if (isStartOfMonth) {
-        sender.cancelAllOrders(account.owner);
+        exchange.cancelAllOrders(account.owner);
 
         // create market order for remaining funds
         if (wallets.EUR.balance > 0)
-          sender.putOrder({
+          exchange.putOrder({
             type: 'market',
             owner: account.owner,
             pair: { base: 'BTC', quote: 'EUR' },
@@ -28,11 +29,11 @@ export class StrategyEnhancedDCA {
         wallets.EUR.deposit(100);
 
         // create limit orders for new funds
-        const { currentPrice } = sender;
+        const { currentPrice } = market;
         const availableFunds = wallets.EUR.balance;
 
         limitPrices(currentPrice, availableFunds, this.sellingAmountPerOrder).forEach(price => {
-          sender.putOrder({
+          exchange.putOrder({
             type: 'limit',
             owner: account.owner,
             pair: { base: 'BTC', quote: 'EUR' },
@@ -43,15 +44,16 @@ export class StrategyEnhancedDCA {
       }
     });
 
-    exchange.on('simulationFinished', sender => {
+    exchange.on('simulationFinishing', sender => {
       sender.cancelAllOrders(account.owner);
 
-      sender.putOrder({
-        type: 'market',
-        owner: account.owner,
-        pair: { base: 'BTC', quote: 'EUR' },
-        sellingAmount: wallets.EUR.balance,
-      });
+      if (wallets.EUR.balance > 0)
+        sender.putOrder({
+          type: 'market',
+          owner: account.owner,
+          pair: { base: 'BTC', quote: 'EUR' },
+          sellingAmount: wallets.EUR.balance,
+        });
     });
   }
 }
