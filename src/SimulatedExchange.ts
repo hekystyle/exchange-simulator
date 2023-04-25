@@ -30,13 +30,13 @@ export interface Exchange extends TypedEventEmitter<Events> {
 }
 
 export class SimulatedExchange extends TypedEventEmitter<Events> implements Exchange {
-  public readonly accounts = new Accounts();
-
   #orders: Order[] = [];
 
   #simulationFinished = false;
 
   constructor(
+    @Inject(Accounts)
+    public readonly accounts: Accounts,
     @Inject(Markets)
     public readonly markets: Markets,
   ) {
