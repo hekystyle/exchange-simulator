@@ -1,10 +1,12 @@
+import { Inject } from '@nestjs/common';
 import dayjs from 'dayjs';
 import { Accounts } from './Accounts.js';
 import { LimitOrder, LimitOrderConfig } from './LimitOrder.js';
-import { Market } from './Market.js';
 import { MarketOrder, MarketOrderConfig } from './MarketOrder.js';
+import { Markets } from './Markets.js';
 import { TypedEventEmitter } from './TypedEventEmitter.js';
 import type { Candle } from './data.js';
+import type { Market } from './Market.js';
 
 type Order = MarketOrder | LimitOrder;
 
@@ -22,9 +24,9 @@ type Events = {
 export interface Exchange extends TypedEventEmitter<Events> {
   accounts: Accounts;
   orders: Orders;
+  markets: Markets;
   putOrder(orderConfig: OrderConfig): this;
   cancelAllOrders(owner: string): this;
-  market(pair: 'BTCEUR'): Market;
 }
 
 export class SimulatedExchange extends TypedEventEmitter<Events> implements Exchange {
@@ -32,13 +34,13 @@ export class SimulatedExchange extends TypedEventEmitter<Events> implements Exch
 
   #orders: Order[] = [];
 
-  #markets = new Map<string, Market>();
-
   #simulationFinished = false;
 
-  constructor() {
+  constructor(
+    @Inject(Markets)
+    public readonly markets: Markets,
+  ) {
     super();
-    this.#markets.set('BTCEUR', new Market('BTCEUR'));
   }
 
   get orders() {
@@ -49,7 +51,7 @@ export class SimulatedExchange extends TypedEventEmitter<Events> implements Exch
     if (this.#simulationFinished) {
       throw new Error('Simulation is already finished');
     }
-    const market = this.market(`${orderConfig.pair.base}${orderConfig.pair.quote}` as const);
+    const market = this.markets.get(`${orderConfig.pair.base}${orderConfig.pair.quote}` as const);
     const { wallets } = this.accounts.get(orderConfig.owner);
     const buyingWallet = wallets[orderConfig.pair.base];
     const sellingWallet = wallets[orderConfig.pair.quote];
@@ -81,7 +83,7 @@ export class SimulatedExchange extends TypedEventEmitter<Events> implements Exch
 
   simulate({ candles, pair }: { candles: Candle[]; pair: 'BTCEUR' }) {
     let lastDate = dayjs();
-    const market = this.market(pair);
+    const market = this.markets.get(pair);
     candles.forEach(candle => {
       const date = dayjs(candle.date);
       lastDate = date;
@@ -109,14 +111,6 @@ export class SimulatedExchange extends TypedEventEmitter<Events> implements Exch
 
     this.#simulationFinished = true;
     this.emit('simulationFinished', this, lastDate.add(1, 'day').toDate());
-  }
-
-  public market(pair: 'BTCEUR'): Market {
-    const market = this.#markets.get(pair);
-    if (!market) {
-      throw new Error(`Market for pair ${pair} was not found`);
-    }
-    return market;
   }
 
   private handlePriceChange(market: Market) {

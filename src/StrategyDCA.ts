@@ -9,7 +9,7 @@ export class StrategyDCA {
     const account = exchange.accounts.open('DCA');
     const { wallets } = account;
 
-    exchange.market('BTCEUR').on('opened', market => {
+    exchange.markets.get('BTCEUR').on('opened', market => {
       const date = market.currentDate;
       const isStartOfMonth = dayjs(date).isSame(dayjs(date).startOf('month'));
 
