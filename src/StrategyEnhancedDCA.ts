@@ -14,11 +14,11 @@ export class StrategyEnhancedDCA {
       const isStartOfMonth = dayjs(date).isSame(dayjs(date).startOf('month'));
 
       if (isStartOfMonth) {
-        exchange.cancelAllOrders(account.owner);
+        exchange.orders.cancelByOwner(account.owner);
 
         // create market order for remaining funds
         if (wallets.EUR.balance > 0)
-          exchange.putOrder({
+          exchange.orders.create({
             type: 'market',
             owner: account.owner,
             pair: { base: 'BTC', quote: 'EUR' },
@@ -33,7 +33,7 @@ export class StrategyEnhancedDCA {
         const availableFunds = wallets.EUR.balance;
 
         limitPrices(currentPrice, availableFunds, this.sellingAmountPerOrder).forEach(price => {
-          exchange.putOrder({
+          exchange.orders.create({
             type: 'limit',
             owner: account.owner,
             pair: { base: 'BTC', quote: 'EUR' },
@@ -45,10 +45,10 @@ export class StrategyEnhancedDCA {
     });
 
     exchange.on('simulationFinishing', sender => {
-      sender.cancelAllOrders(account.owner);
+      sender.orders.cancelByOwner(account.owner);
 
       if (wallets.EUR.balance > 0)
-        sender.putOrder({
+        sender.orders.create({
           type: 'market',
           owner: account.owner,
           pair: { base: 'BTC', quote: 'EUR' },

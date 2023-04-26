@@ -1,3 +1,4 @@
+import { Subject, Observable } from 'rxjs';
 import { TypedEventEmitter } from './TypedEventEmitter.js';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
@@ -6,6 +7,8 @@ export type MarketEvents = {
 };
 
 export class Market extends TypedEventEmitter<MarketEvents> {
+  #onPriceChanged = new Subject<Market>();
+
   #isOpen = false;
 
   #currentPrice: number | undefined = undefined;
@@ -30,6 +33,10 @@ export class Market extends TypedEventEmitter<MarketEvents> {
     return this.#currentDate;
   }
 
+  onPriceChanged(): Observable<Market> {
+    return this.#onPriceChanged.asObservable();
+  }
+
   open(price: number, date: Date): this {
     if (this.#isOpen) {
       throw new Error('Market is already open');
@@ -38,6 +45,7 @@ export class Market extends TypedEventEmitter<MarketEvents> {
     this.#currentPrice = price;
     this.#currentDate = date;
     this.emit('opened', this);
+    this.#onPriceChanged.next(this);
     return this;
   }
 
@@ -46,6 +54,7 @@ export class Market extends TypedEventEmitter<MarketEvents> {
       throw new Error('Market is not open');
     }
     this.#currentPrice = price;
+    this.#onPriceChanged.next(this);
     return this;
   }
 

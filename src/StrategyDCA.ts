@@ -18,7 +18,7 @@ export class StrategyDCA {
         this.#amountPerDay = Decimal.div(wallets.EUR.balance, dayjs(date).daysInMonth()).toDecimalPlaces(2).toNumber();
       }
 
-      exchange.putOrder({
+      exchange.orders.create({
         type: 'market',
         pair: { base: 'BTC', quote: 'EUR' },
         owner: account.owner,

@@ -24,7 +24,7 @@ export class StatisticsCollector {
             y: balance,
           });
 
-          const reservedBalanceInOpenedOrders = sender.orders
+          const reservedBalanceInOpenedOrders = Array.from(sender.orders)
             .filter(order => order.sellingWallet === wallet && order.status === 'open')
             .reduce((acc, order) => {
               return Decimal.add(acc, order.config.sellingAmount);

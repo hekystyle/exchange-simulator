@@ -4527,6 +4527,7 @@ __metadata:
     lerna: 6.6.1
     prettier: 2.8.7
     reflect-metadata: 0.1.13
+    rxjs: 7.8.0
     typescript: 5.0.4
     vitest: 0.30.1
   languageName: unknown
@@ -9085,7 +9086,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rxjs@npm:^7.5.5":
+"rxjs@npm:7.8.0, rxjs@npm:^7.5.5":
   version: 7.8.0
   resolution: "rxjs@npm:7.8.0"
   dependencies:
