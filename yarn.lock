@@ -581,7 +581,7 @@ __metadata:
     react: 18.2.0
     react-dom: 18.2.0
     typescript: 5.0.4
-    vite: 4.2.2
+    vite: 4.3.3
     vite-tsconfig-paths: 4.2.0
   languageName: unknown
   linkType: soft
@@ -7191,7 +7191,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanoid@npm:^3.3.4":
+"nanoid@npm:^3.3.4, nanoid@npm:^3.3.6":
   version: 3.3.6
   resolution: "nanoid@npm:3.3.6"
   bin:
@@ -8336,6 +8336,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"postcss@npm:^8.4.23":
+  version: 8.4.23
+  resolution: "postcss@npm:8.4.23"
+  dependencies:
+    nanoid: ^3.3.6
+    picocolors: ^1.0.0
+    source-map-js: ^1.0.2
+  checksum: 8bb9d1b2ea6e694f8987d4f18c94617971b2b8d141602725fedcc2222fdc413b776a6e1b969a25d627d7b2681ca5aabb56f59e727ef94072e1b6ac8412105a2f
+  languageName: node
+  linkType: hard
+
 "prelude-ls@npm:^1.2.1":
   version: 1.2.1
   resolution: "prelude-ls@npm:1.2.1"
@@ -9022,6 +9033,20 @@ __metadata:
   bin:
     rollup: dist/bin/rollup
   checksum: 34b0932839b7c2a5d1742fb21ce95a47e0b49a0849f4abee2dccf25833187aa7babb898ca90d4fc761cffa4102b9ed0ac6ad7f6f6b96c8b8e2d67305abc5da65
+  languageName: node
+  linkType: hard
+
+"rollup@npm:^3.21.0":
+  version: 3.21.0
+  resolution: "rollup@npm:3.21.0"
+  dependencies:
+    fsevents: ~2.3.2
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  bin:
+    rollup: dist/bin/rollup
+  checksum: f3294d712147c0975c59ff81b3010dc08d07743cdad72fbe12879044b3e467139b3c2aeec85768656c4f7ec6a7b3d19354a78fc2050044bf8e90a499e145e31e
   languageName: node
   linkType: hard
 
@@ -10384,15 +10409,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:4.2.2":
-  version: 4.2.2
-  resolution: "vite@npm:4.2.2"
+"vite@npm:4.3.3":
+  version: 4.3.3
+  resolution: "vite@npm:4.3.3"
   dependencies:
     esbuild: ^0.17.5
     fsevents: ~2.3.2
-    postcss: ^8.4.21
-    resolve: ^1.22.1
-    rollup: ^3.18.0
+    postcss: ^8.4.23
+    rollup: ^3.21.0
   peerDependencies:
     "@types/node": ">= 14"
     less: "*"
@@ -10418,7 +10442,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 7fff9d046f6091c02e030aa5f45e68939b9bec1dd15d4e2c3c084d82ec185300295f3db26f537daf2e19f9ad191be260bf70e5fe0e2d9054f174a7ad457623f8
+  checksum: 99970cb1fed3330458e60f8341ec73c4260c82d815e51c95295321ab496e4c8cb447bc942daf4d94f78bbc8b2bed36cbc237f43fdc1cede19250fac737e5a0fc
   languageName: node
   linkType: hard
 
