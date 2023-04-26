@@ -1,12 +1,8 @@
 import { Subject, Observable } from 'rxjs';
-import { TypedEventEmitter } from './TypedEventEmitter.js';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-export type MarketEvents = {
-  opened: [Market];
-};
+export class Market {
+  #onOpened = new Subject<Market>();
 
-export class Market extends TypedEventEmitter<MarketEvents> {
   #onPriceChanged = new Subject<Market>();
 
   #isOpen = false;
@@ -15,9 +11,7 @@ export class Market extends TypedEventEmitter<MarketEvents> {
 
   #currentDate: Date | undefined = undefined;
 
-  constructor(public readonly name: 'BTCEUR') {
-    super();
-  }
+  constructor(public readonly name: 'BTCEUR') {}
 
   get currentPrice(): number {
     if (!this.#currentPrice) {
@@ -33,6 +27,10 @@ export class Market extends TypedEventEmitter<MarketEvents> {
     return this.#currentDate;
   }
 
+  onOpened(): Observable<Market> {
+    return this.#onOpened.asObservable();
+  }
+
   onPriceChanged(): Observable<Market> {
     return this.#onPriceChanged.asObservable();
   }
@@ -44,7 +42,7 @@ export class Market extends TypedEventEmitter<MarketEvents> {
     this.#isOpen = true;
     this.#currentPrice = price;
     this.#currentDate = date;
-    this.emit('opened', this);
+    this.#onOpened.next(this);
     this.#onPriceChanged.next(this);
     return this;
   }

@@ -9,42 +9,45 @@ export class StrategyEnhancedDCA {
     const account = exchange.accounts.open('Enhanced DCA');
     const { wallets } = account;
 
-    exchange.markets.get('BTCEUR').on('opened', market => {
-      const date = market.currentDate;
-      const isStartOfMonth = dayjs(date).isSame(dayjs(date).startOf('month'));
+    exchange.markets
+      .get('BTCEUR')
+      .onOpened()
+      .subscribe(market => {
+        const date = market.currentDate;
+        const isStartOfMonth = dayjs(date).isSame(dayjs(date).startOf('month'));
 
-      if (isStartOfMonth) {
-        exchange.orders.cancelByOwner(account.owner);
+        if (isStartOfMonth) {
+          exchange.orders.cancelByOwner(account.owner);
 
-        // create market order for remaining funds
-        if (wallets.EUR.balance > 0)
-          exchange.orders.create({
-            type: 'market',
-            owner: account.owner,
-            pair: { base: 'BTC', quote: 'EUR' },
-            sellingAmount: wallets.EUR.balance,
+          // create market order for remaining funds
+          if (wallets.EUR.balance > 0)
+            exchange.orders.create({
+              type: 'market',
+              owner: account.owner,
+              pair: { base: 'BTC', quote: 'EUR' },
+              sellingAmount: wallets.EUR.balance,
+            });
+
+          // add new funds to EUR account
+          wallets.EUR.deposit(100);
+
+          // create limit orders for new funds
+          const { currentPrice } = market;
+          const availableFunds = wallets.EUR.balance;
+
+          limitPrices(currentPrice, availableFunds, this.sellingAmountPerOrder).forEach(price => {
+            exchange.orders.create({
+              type: 'limit',
+              owner: account.owner,
+              pair: { base: 'BTC', quote: 'EUR' },
+              limitPrice: price,
+              sellingAmount: Math.min(wallets.EUR.balance, this.sellingAmountPerOrder),
+            });
           });
+        }
+      });
 
-        // add new funds to EUR account
-        wallets.EUR.deposit(100);
-
-        // create limit orders for new funds
-        const { currentPrice } = market;
-        const availableFunds = wallets.EUR.balance;
-
-        limitPrices(currentPrice, availableFunds, this.sellingAmountPerOrder).forEach(price => {
-          exchange.orders.create({
-            type: 'limit',
-            owner: account.owner,
-            pair: { base: 'BTC', quote: 'EUR' },
-            limitPrice: price,
-            sellingAmount: Math.min(wallets.EUR.balance, this.sellingAmountPerOrder),
-          });
-        });
-      }
-    });
-
-    exchange.on('simulationFinishing', sender => {
+    exchange.onSimulationFinishing().subscribe(sender => {
       sender.orders.cancelByOwner(account.owner);
 
       if (wallets.EUR.balance > 0)
