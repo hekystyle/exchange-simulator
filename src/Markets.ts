@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 import { Market } from './Market.js';
 
 export class Markets implements Iterable<Market> {
@@ -9,6 +10,12 @@ export class Markets implements Iterable<Market> {
 
   [Symbol.iterator](): Iterator<Market> {
     return this.#markets.values();
+  }
+
+  onPriceChanged(): Observable<Market> {
+    return new Observable<Market>(subscriber => {
+      this.#markets.forEach(market => market.onPriceChanged().subscribe(subscriber));
+    });
   }
 
   get(pair: string): Market {

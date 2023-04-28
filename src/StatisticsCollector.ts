@@ -9,13 +9,13 @@ export class StatisticsCollector {
 
   constructor(
     @Inject(SimulatedExchange)
-    private readonly exchange: Exchange,
+    private readonly exchange: SimulatedExchange,
   ) {
     this.setup();
   }
 
   setup(): this {
-    const handler = (sender: Exchange, date: Date) => {
+    const handler = ([sender, date]: [Exchange, Date]) => {
       Array.from(sender.accounts).forEach(({ wallets, owner }) => {
         Array.from(wallets).forEach(wallet => {
           const { currency, balance } = wallet;
@@ -24,7 +24,7 @@ export class StatisticsCollector {
             y: balance,
           });
 
-          const reservedBalanceInOpenedOrders = sender.orders
+          const reservedBalanceInOpenedOrders = Array.from(sender.orders)
             .filter(order => order.sellingWallet === wallet && order.status === 'open')
             .reduce((acc, order) => {
               return Decimal.add(acc, order.config.sellingAmount);
@@ -39,8 +39,8 @@ export class StatisticsCollector {
       });
     };
 
-    this.exchange.on('tick', handler);
-    this.exchange.on('simulationFinished', handler);
+    this.exchange.onTick().subscribe(handler);
+    this.exchange.onSimulationFinished().subscribe(handler);
     return this;
   }
 
