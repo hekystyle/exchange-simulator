@@ -16,31 +16,17 @@
   ],
   "scripts": {
     "build": "lerna run build",
-    "build:server": "nest build -p tsconfig.build.json",
-    "check-types": "tsc --noEmit",
+    "check-types": "lerna run check-types",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "start": "NEST_DEBUG=1 && nest start",
-    "start:debug": "NEST_DEBUG=1 && nest start --debug --watch",
-    "start:dev": "NEST_DEBUG=1 && nest start --watch",
-    "test": "vitest"
-  },
-  "dependencies": {
-    "@exchange-simulator/common": "*",
-    "@nestjs/common": "9.4.0",
-    "@nestjs/core": "9.4.0",
-    "@nestjs/platform-express": "9.4.0",
-    "dayjs": "1.11.7",
-    "decimal.js": "10.4.3",
-    "json-stable-stringify": "1.0.2",
-    "rxjs": "7.8.0"
+    "start:be": "lerna run start --scope @exchange-simulator/backend",
+    "start:fe": "lerna run start --scope @exchange-simulator/frontend",
+    "test": "lerna run test"
   },
   "devDependencies": {
-    "@nestjs/cli": "9.4.2",
-    "@nestjs/schematics": "9.1.0",
-    "@nestjs/testing": "9.4.0",
-    "@tsconfig/node16-strictest-esm": "1.0.3",
-    "@types/json-stable-stringify": "1.0.34",
+    "@tsconfig/esm": "1.0.3",
+    "@tsconfig/node16": "1.0.3",
+    "@tsconfig/strictest": "2.0.1",
     "@typescript-eslint/eslint-plugin": "5.59.0",
     "@typescript-eslint/parser": "5.59.0",
     "eslint": "8.38.0",
@@ -57,8 +43,6 @@
     "eslint-plugin-vitest": "0.1.4",
     "lerna": "6.6.1",
     "prettier": "2.8.7",
-    "reflect-metadata": "0.1.13",
-    "typescript": "5.0.4",
     "vitest": "0.30.1"
   }
 }

@@ -1,0 +1,40 @@
+{
+  "name": "@exchange-simulator/backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "repository": "git@github.com:hekystyle/exchange-simulator.git",
+  "author": "Tomáš Heky Hekrla <tomas@heky.eu>",
+  "license": "MIT",
+  "packageManager": "yarn@3.5.0",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "private": true,
+  "scripts": {
+    "build": "nest build -p tsconfig.json",
+    "check-types": "tsc --noEmit",
+    "start": "NEST_DEBUG=1 && nest start --watch",
+    "start:debug": "NEST_DEBUG=1 && nest start --debug --watch",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@exchange-simulator/common": "*",
+    "@nestjs/common": "9.4.0",
+    "@nestjs/core": "9.4.0",
+    "@nestjs/platform-express": "9.4.0",
+    "dayjs": "1.11.7",
+    "decimal.js": "10.4.3",
+    "json-stable-stringify": "1.0.2",
+    "rxjs": "7.8.0"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "9.4.2",
+    "@nestjs/schematics": "9.1.0",
+    "@nestjs/testing": "9.4.0",
+    "@types/json-stable-stringify": "1.0.34",
+    "reflect-metadata": "0.1.13",
+    "typescript": "5.0.4",
+    "vitest": "0.30.1"
+  }
+}
