@@ -68,7 +68,6 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - run: yarn build
-      - run: yarn build:server
 
   test:
     needs: [install]
