@@ -1579,10 +1579,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsconfig/node16-strictest-esm@npm:1.0.3":
+"@tsconfig/esm@npm:1.0.3":
   version: 1.0.3
-  resolution: "@tsconfig/node16-strictest-esm@npm:1.0.3"
-  checksum: cc5650a1752e29f1adf5c4ff0a60e4f948c34d5a1e489a4504f3125c8b9b6f915f94dcd06e0936211a349d067469380e25f6ab461a4c0fd4a3b71c7108378fd7
+  resolution: "@tsconfig/esm@npm:1.0.3"
+  checksum: 07216f491c2603fbd7a5c214f39a2efa183c810dabb77d282ae930bab62f99ff7dbb2ddd7372e5e56ce72e8fb55eb92e3ee5dd6a46c0a7f980c1b59c402fa60b
+  languageName: node
+  linkType: hard
+
+"@tsconfig/node16@npm:1.0.3":
+  version: 1.0.3
+  resolution: "@tsconfig/node16@npm:1.0.3"
+  checksum: 3a8b657dd047495b7ad23437d6afd20297ce90380ff0bdee93fc7d39a900dbd8d9e26e53ff6b465e7967ce2adf0b218782590ce9013285121e6a5928fbd6819f
+  languageName: node
+  linkType: hard
+
+"@tsconfig/strictest@npm:2.0.1":
+  version: 2.0.1
+  resolution: "@tsconfig/strictest@npm:2.0.1"
+  checksum: 3a9b913e06c20fee0a002fc22a925370525dd917853dee2e0082de763b10a61a69d72d60d02e243629da94b3e0b98843469a3b063c0ab2a5d6716183867dd114
   languageName: node
   linkType: hard
 
@@ -4520,7 +4534,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "exchange-simulator@workspace:."
   dependencies:
-    "@tsconfig/node16-strictest-esm": 1.0.3
+    "@tsconfig/esm": 1.0.3
+    "@tsconfig/node16": 1.0.3
+    "@tsconfig/strictest": 2.0.1
     "@typescript-eslint/eslint-plugin": 5.59.0
     "@typescript-eslint/parser": 5.59.0
     eslint: 8.38.0
