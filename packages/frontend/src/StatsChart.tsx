@@ -20,10 +20,14 @@ const fetchStats = async (signal?: AbortSignal): Promise<Serie[]> => {
 const TRANSLATED_SOURCE = {
   wallet: 'Wallet balance',
   orders: 'Opened orders',
+  'fear-and-greed-index': 'Fear and Greed Index',
 } as const satisfies Record<Source, string>;
 
 const getSerieName = (meta: Metadata): string => {
-  return [TRANSLATED_SOURCE[meta.source], `[${meta.currency}]`, `[${meta.owner}]`].join(' ');
+  let name = TRANSLATED_SOURCE[meta.source];
+  if (meta.unit) name += ` [${meta.unit}]`;
+  if (meta.owner) name += ` [${meta.owner}]`;
+  return name;
 };
 
 export const StatsChart: FC = () => {
@@ -68,14 +72,22 @@ export const StatsChart: FC = () => {
                 text: 'BTC',
               },
             },
+            {
+              id: '%',
+              title: {
+                text: '%',
+              },
+              min: 0,
+              max: 100,
+            },
           ],
           series: (data ?? []).map<SeriesLineOptions>(({ data: points, meta }) => ({
             type: 'line',
             name: getSerieName(meta),
-            yAxis: meta.currency,
+            yAxis: meta.unit,
             data: points,
             tooltip: {
-              valueDecimals: meta.currency === 'BTC' ? 8 : 2,
+              valueDecimals: meta.unit === 'BTC' ? 8 : 2,
             },
           })),
         }}

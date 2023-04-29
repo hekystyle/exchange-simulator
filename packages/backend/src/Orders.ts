@@ -28,8 +28,14 @@ export class Orders implements Iterable<Order> {
   create(orderConfig: OrderConfig) {
     const market = this.markets.get(`${orderConfig.pair.base}${orderConfig.pair.quote}` as const);
     const { wallets } = this.accounts.get(orderConfig.owner);
-    const buyingWallet = wallets[orderConfig.pair.base];
-    const sellingWallet = wallets[orderConfig.pair.quote];
+    let buyingWallet = wallets[orderConfig.pair.base];
+    let sellingWallet = wallets[orderConfig.pair.quote];
+
+    if (orderConfig.direction === 'sell') {
+      // switch accounts
+      buyingWallet = wallets[orderConfig.pair.quote];
+      sellingWallet = wallets[orderConfig.pair.base];
+    }
 
     let order: Order | undefined;
     switch (orderConfig.type) {

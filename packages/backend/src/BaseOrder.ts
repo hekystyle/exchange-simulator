@@ -8,6 +8,7 @@ interface TradingPair<T extends [string, string]> {
 
 export interface BaseOrderConfig {
   type: string;
+  direction: 'buy' | 'sell';
   owner: string;
   pair: TradingPair<['BTC', 'EUR']>;
   sellingAmount: number;
@@ -47,7 +48,10 @@ export class BaseOrder {
       throw new Error('Order needs to be open to be filled');
     }
     this.#status = 'filled';
-    const buyingAmount = Decimal.div(this.config.sellingAmount, price).toNumber();
+    const buyingAmount =
+      this.config.direction === 'buy'
+        ? Decimal.div(this.config.sellingAmount, price).toNumber()
+        : Decimal.mul(this.config.sellingAmount, price).toNumber();
     this.buyingWallet.deposit(buyingAmount);
     return this;
   }

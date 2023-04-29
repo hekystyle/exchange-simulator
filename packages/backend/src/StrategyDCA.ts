@@ -14,7 +14,7 @@ export class StrategyDCA {
       .onOpened()
       .subscribe(market => {
         const date = market.currentDate;
-        const isStartOfMonth = dayjs(date).isSame(dayjs(date).startOf('month'));
+        const isStartOfMonth = dayjs(date).isSame(dayjs.utc(date).startOf('month'));
 
         if (isStartOfMonth) {
           wallets.EUR.deposit(100);
@@ -23,12 +23,14 @@ export class StrategyDCA {
             .toNumber();
         }
 
-        exchange.orders.create({
-          type: 'market',
-          pair: { base: 'BTC', quote: 'EUR' },
-          owner: account.owner,
-          sellingAmount: Math.min(this.#amountPerDay, wallets.EUR.balance),
-        });
+        if (wallets.EUR.balance > 0)
+          exchange.orders.create({
+            type: 'market',
+            direction: 'buy',
+            pair: { base: 'BTC', quote: 'EUR' },
+            owner: account.owner,
+            sellingAmount: Math.min(this.#amountPerDay, wallets.EUR.balance),
+          });
       });
   }
 }

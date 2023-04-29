@@ -8,6 +8,7 @@ it.each([-1, 0])('should not allow sell negative or zero amount', amount => {
       new BaseOrder(
         {
           type: 'base',
+          direction: 'buy',
           owner: 'owner',
           pair: { base: 'BTC', quote: 'EUR' },
           sellingAmount: amount,
@@ -25,6 +26,7 @@ it('should not allow to sell more than balance', () => {
       new BaseOrder(
         {
           type: 'base',
+          direction: 'buy',
           owner: 'owner',
           pair: { base: 'BTC', quote: 'EUR' },
           sellingAmount: 101,

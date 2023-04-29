@@ -6,11 +6,11 @@ interface Point {
   y: Y;
 }
 
-export type Source = 'wallet' | 'orders';
+export type Source = 'wallet' | 'orders' | 'fear-and-greed-index';
 
 export interface Metadata {
-  owner: string;
-  currency: string;
+  owner?: string;
+  unit: string;
   source: Source;
 }
 

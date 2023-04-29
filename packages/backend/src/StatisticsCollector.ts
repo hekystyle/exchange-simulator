@@ -1,6 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { Decimal } from 'decimal.js';
 import stableJsonStringify from 'json-stable-stringify';
+import { BTC_FNG } from './data/fng.js';
 import { Exchange, SimulatedExchange } from './SimulatedExchange.js';
 import type { Metadata, Serie } from '@exchange-simulator/common';
 
@@ -19,7 +20,7 @@ export class StatisticsCollector {
       Array.from(sender.accounts).forEach(({ wallets, owner }) => {
         Array.from(wallets).forEach(wallet => {
           const { currency, balance } = wallet;
-          this.#getOrCreateSerie({ owner, currency, source: 'wallet' }).data.push({
+          this.#getOrCreateSerie({ owner, unit: currency, source: 'wallet' }).data.push({
             x: date.getTime(),
             y: balance,
           });
@@ -31,12 +32,20 @@ export class StatisticsCollector {
             }, new Decimal(0))
             .toNumber();
 
-          this.#getOrCreateSerie({ owner, currency, source: 'orders' }).data.push({
+          this.#getOrCreateSerie({ owner, unit: currency, source: 'orders' }).data.push({
             x: date.getTime(),
             y: reservedBalanceInOpenedOrders,
           });
         });
       });
+
+      const fearAndGreedIndex = BTC_FNG.get(date.toISOString());
+      if (fearAndGreedIndex !== undefined) {
+        this.#getOrCreateSerie({ unit: '%', source: 'fear-and-greed-index' }).data.push({
+          x: date.getTime(),
+          y: fearAndGreedIndex,
+        });
+      }
     };
 
     this.exchange.onTick().subscribe(handler);
