@@ -1,8 +1,8 @@
+import { Metadata, Serie, compactPoint } from '@exchange-simulator/common';
 import { Inject } from '@nestjs/common';
 import { Decimal } from 'decimal.js';
 import stableJsonStringify from 'json-stable-stringify';
 import { Exchange, SimulatedExchange } from './SimulatedExchange.js';
-import type { Metadata, Serie } from '@exchange-simulator/common';
 
 export class StatisticsCollector {
   #series = new Map<string, Serie>();
@@ -19,10 +19,12 @@ export class StatisticsCollector {
       Array.from(sender.accounts).forEach(({ wallets, owner }) => {
         Array.from(wallets).forEach(wallet => {
           const { currency, balance } = wallet;
-          this.#getOrCreateSerie({ owner, currency, source: 'wallet' }).data.push({
-            x: date.getTime(),
-            y: balance,
-          });
+          this.#getOrCreateSerie({ owner, currency, source: 'wallet' }).data.push(
+            compactPoint({
+              x: date.getTime(),
+              y: balance,
+            }),
+          );
 
           const reservedBalanceInOpenedOrders = Array.from(sender.orders)
             .filter(order => order.sellingWallet === wallet && order.status === 'open')
@@ -31,10 +33,12 @@ export class StatisticsCollector {
             }, new Decimal(0))
             .toNumber();
 
-          this.#getOrCreateSerie({ owner, currency, source: 'orders' }).data.push({
-            x: date.getTime(),
-            y: reservedBalanceInOpenedOrders,
-          });
+          this.#getOrCreateSerie({ owner, currency, source: 'orders' }).data.push(
+            compactPoint({
+              x: date.getTime(),
+              y: reservedBalanceInOpenedOrders,
+            }),
+          );
         });
       });
     };

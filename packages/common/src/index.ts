@@ -6,6 +6,10 @@ interface Point {
   y: Y;
 }
 
+type CompactPoint = [X, Y];
+
+export const compactPoint = ({ x, y }: Point): CompactPoint => [x, y];
+
 export type Source = 'wallet' | 'orders';
 
 export interface Metadata {
@@ -16,5 +20,5 @@ export interface Metadata {
 
 export interface Serie {
   meta: Metadata;
-  data: Point[];
+  data: CompactPoint[];
 }
