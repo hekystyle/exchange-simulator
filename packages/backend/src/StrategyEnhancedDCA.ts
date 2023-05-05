@@ -23,6 +23,7 @@ export class StrategyEnhancedDCA {
           if (wallets.EUR.balance > 0)
             exchange.orders.create({
               type: 'market',
+              direction: 'buy',
               owner: account.owner,
               pair: { base: 'BTC', quote: 'EUR' },
               sellingAmount: wallets.EUR.balance,
@@ -38,6 +39,7 @@ export class StrategyEnhancedDCA {
           limitPrices(currentPrice, availableFunds, this.sellingAmountPerOrder).forEach(price => {
             exchange.orders.create({
               type: 'limit',
+              direction: 'buy',
               owner: account.owner,
               pair: { base: 'BTC', quote: 'EUR' },
               limitPrice: price,
@@ -53,6 +55,7 @@ export class StrategyEnhancedDCA {
       if (wallets.EUR.balance > 0)
         sender.orders.create({
           type: 'market',
+          direction: 'buy',
           owner: account.owner,
           pair: { base: 'BTC', quote: 'EUR' },
           sellingAmount: wallets.EUR.balance,

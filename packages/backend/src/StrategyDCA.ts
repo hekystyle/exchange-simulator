@@ -25,6 +25,7 @@ export class StrategyDCA {
 
         exchange.orders.create({
           type: 'market',
+          direction: 'buy',
           pair: { base: 'BTC', quote: 'EUR' },
           owner: account.owner,
           sellingAmount: Math.min(this.#amountPerDay, wallets.EUR.balance),
