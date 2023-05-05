@@ -19,7 +19,7 @@ export class StatisticsCollector {
       Array.from(sender.accounts).forEach(({ wallets, owner }) => {
         Array.from(wallets).forEach(wallet => {
           const { currency, balance } = wallet;
-          this.#getOrCreateSerie({ owner, currency, source: 'wallet' }).data.push(
+          this.#getOrCreateSerie({ owner, unit: currency, source: 'wallet' }).data.push(
             compactPoint({
               x: date.getTime(),
               y: balance,
@@ -33,7 +33,7 @@ export class StatisticsCollector {
             }, new Decimal(0))
             .toNumber();
 
-          this.#getOrCreateSerie({ owner, currency, source: 'orders' }).data.push(
+          this.#getOrCreateSerie({ owner, unit: currency, source: 'orders' }).data.push(
             compactPoint({
               x: date.getTime(),
               y: reservedBalanceInOpenedOrders,

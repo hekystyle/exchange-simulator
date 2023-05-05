@@ -14,7 +14,7 @@ export type Source = 'wallet' | 'orders';
 
 export interface Metadata {
   owner: string;
-  currency: string;
+  unit: string;
   source: Source;
 }
 

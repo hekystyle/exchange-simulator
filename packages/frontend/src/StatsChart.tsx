@@ -23,7 +23,7 @@ const TRANSLATED_SOURCE = {
 } as const satisfies Record<Source, string>;
 
 const getSerieName = (meta: Metadata): string => {
-  return [TRANSLATED_SOURCE[meta.source], `[${meta.currency}]`, `[${meta.owner}]`].join(' ');
+  return [TRANSLATED_SOURCE[meta.source], `[${meta.unit}]`, `[${meta.owner}]`].join(' ');
 };
 
 export const StatsChart: FC = () => {
@@ -72,10 +72,10 @@ export const StatsChart: FC = () => {
           series: (data ?? []).map<SeriesLineOptions>(({ data: points, meta }) => ({
             type: 'line',
             name: getSerieName(meta),
-            yAxis: meta.currency,
+            yAxis: meta.unit,
             data: points,
             tooltip: {
-              valueDecimals: meta.currency === 'BTC' ? 8 : 2,
+              valueDecimals: meta.unit === 'BTC' ? 8 : 2,
             },
           })),
         }}
