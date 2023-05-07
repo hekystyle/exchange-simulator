@@ -6,7 +6,7 @@
   "homepage": "https://github.com/hekystyle/exchange-simulator#readme",
   "license": "ISC",
   "type": "module",
-  "main": "lib/index.js",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hekystyle/exchange-simulator.git"
