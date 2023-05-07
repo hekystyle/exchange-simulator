@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
-import { BTCEUR_YEAR_DAILY_CANDLES } from './data.js';
+import { BTCEUR_YEAR_DAILY_CANDLES } from './data/BTCEUR.js';
 import { SimulatedExchange } from './SimulatedExchange.js';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 
