@@ -9,6 +9,8 @@ export class StrategyEnhancedDCA {
   constructor(public readonly sellingAmountPerOrder: number) {}
 
   setup(exchange: Exchange) {
+    this.#logger.debug(this.setup.name);
+
     const account = exchange.accounts.open('Enhanced DCA');
     const { wallets } = account;
 
@@ -17,7 +19,7 @@ export class StrategyEnhancedDCA {
       .onOpened()
       .subscribe(market => {
         const date = market.currentDate;
-        const isStartOfMonth = dayjs(date).isSame(dayjs(date).startOf('month'));
+        const isStartOfMonth = dayjs(date).isSame(dayjs.utc(date).startOf('month'));
 
         if (isStartOfMonth) {
           this.#logger.log('start of month');

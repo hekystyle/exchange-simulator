@@ -1,5 +1,7 @@
+import dayjs from 'dayjs';
+
 export interface Candle {
-  date: string;
+  date: Date;
   open: number;
   high: number;
   low: number;
@@ -2352,4 +2354,9 @@ export const BTCEUR_YEAR_DAILY_CANDLES: Candle[] = [
     low: 25434.826172,
     close: 25708.375,
   },
-];
+].map(candle => {
+  return {
+    ...candle,
+    date: dayjs.utc(candle.date).toDate(),
+  };
+});
