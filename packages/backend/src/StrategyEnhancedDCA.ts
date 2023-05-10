@@ -1,8 +1,11 @@
+import { Logger } from '@nestjs/common';
 import dayjs from 'dayjs';
 import { limitPrices } from './limitPrices.js';
 import type { Exchange } from './SimulatedExchange.js';
 
 export class StrategyEnhancedDCA {
+  readonly #logger = new Logger(StrategyEnhancedDCA.name);
+
   constructor(public readonly sellingAmountPerOrder: number) {}
 
   setup(exchange: Exchange) {
@@ -17,6 +20,8 @@ export class StrategyEnhancedDCA {
         const isStartOfMonth = dayjs(date).isSame(dayjs(date).startOf('month'));
 
         if (isStartOfMonth) {
+          this.#logger.log('start of month');
+
           exchange.orders.cancelByOwner(account.owner);
 
           // create market order for remaining funds

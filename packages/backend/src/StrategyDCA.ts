@@ -1,9 +1,12 @@
+import { Logger } from '@nestjs/common';
 import dayjs from 'dayjs';
 import { Decimal } from 'decimal.js';
 import type { Exchange } from './SimulatedExchange.js';
 
 export class StrategyDCA {
   #amountPerDay = 0;
+
+  readonly #logger = new Logger(StrategyDCA.name);
 
   setup(exchange: Exchange) {
     const account = exchange.accounts.open('DCA');
@@ -17,6 +20,8 @@ export class StrategyDCA {
         const isStartOfMonth = dayjs(date).isSame(dayjs(date).startOf('month'));
 
         if (isStartOfMonth) {
+          this.#logger.log('start of month');
+
           wallets.EUR.deposit(100);
           this.#amountPerDay = Decimal.div(wallets.EUR.balance, dayjs(date).daysInMonth())
             .toDecimalPlaces(2)
