@@ -586,6 +586,8 @@ __metadata:
 "@exchange-simulator/common@*, @exchange-simulator/common@workspace:packages/common":
   version: 0.0.0-use.local
   resolution: "@exchange-simulator/common@workspace:packages/common"
+  dependencies:
+    typescript: 5.0.4
   languageName: unknown
   linkType: soft
 
@@ -4553,7 +4555,6 @@ __metadata:
     eslint-plugin-vitest: 0.1.4
     lerna: 6.6.1
     prettier: 2.8.7
-    vitest: 0.30.1
   languageName: unknown
   linkType: soft
 

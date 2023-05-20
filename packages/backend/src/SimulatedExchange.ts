@@ -4,7 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { Accounts } from './Accounts.js';
 import { Markets } from './Markets.js';
 import { Orders } from './Orders.js';
-import type { Candle } from './data.js';
+import type { Candle } from './data/BTCEUR.js';
 
 export interface Exchange {
   accounts: Accounts;

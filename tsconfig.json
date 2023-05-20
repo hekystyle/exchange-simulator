@@ -4,7 +4,7 @@
     "@tsconfig/strictest/tsconfig.json",
     "@tsconfig/esm/tsconfig.json",
   ],
-  "include": ["src", "packages/*/src", "packages/*/vite.config.ts"],
+  "include": ["packages/*/src", "packages/*/tests", "packages/*/vite.config.ts"],
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig to read more about this file */
 

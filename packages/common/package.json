@@ -5,7 +5,8 @@
   "author": "Tomáš Hekrla <tomas@heky.eu>",
   "homepage": "https://github.com/hekystyle/exchange-simulator#readme",
   "license": "ISC",
-  "main": "src/index.ts",
+  "type": "module",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hekystyle/exchange-simulator.git"
@@ -15,5 +16,8 @@
   },
   "bugs": {
     "url": "https://github.com/hekystyle/exchange-simulator/issues"
+  },
+  "devDependencies": {
+    "typescript": "5.0.4"
   }
 }

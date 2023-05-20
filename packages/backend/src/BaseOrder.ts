@@ -8,6 +8,7 @@ interface TradingPair<T extends [string, string]> {
 
 export interface BaseOrderConfig {
   type: string;
+  direction: 'buy';
   owner: string;
   pair: TradingPair<['BTC', 'EUR']>;
   sellingAmount: number;
