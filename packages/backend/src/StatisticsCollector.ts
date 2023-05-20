@@ -1,21 +1,22 @@
 import { Metadata, Serie, compactPoint } from '@exchange-simulator/common';
 import { Inject } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Decimal } from 'decimal.js';
 import stableJsonStringify from 'json-stable-stringify';
-import { Exchange, SimulatedExchange } from './SimulatedExchange.js';
+import { SimulatedExchange } from './SimulatedExchange.js';
 
 export class StatisticsCollector {
   #series = new Map<string, Serie>();
 
   constructor(
-    @Inject(SimulatedExchange)
-    private readonly exchange: SimulatedExchange,
+    @Inject(EventEmitter2)
+    private readonly eventEmitter: EventEmitter2,
   ) {
     this.setup();
   }
 
   setup(): this {
-    const handler = ([sender, date]: [Exchange, Date]) => {
+    const handler = ([sender, date]: [SimulatedExchange, Date]) => {
       Array.from(sender.accounts).forEach(({ wallets, owner }) => {
         Array.from(wallets).forEach(wallet => {
           const { currency, balance } = wallet;
@@ -43,8 +44,8 @@ export class StatisticsCollector {
       });
     };
 
-    this.exchange.onTick().subscribe(handler);
-    this.exchange.onSimulationFinished().subscribe(handler);
+    this.eventEmitter.on(SimulatedExchange.TICK, handler);
+    this.eventEmitter.on(SimulatedExchange.SIMULATION_FINISHED, handler);
     return this;
   }
 
