@@ -1,21 +1,19 @@
-import { Observable } from 'rxjs';
+import { Inject } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Market } from './Market.js';
 
 export class Markets implements Iterable<Market> {
   #markets = new Map<string, Market>();
 
-  constructor() {
-    this.#markets.set('BTCEUR', new Market('BTCEUR'));
+  constructor(
+    @Inject(EventEmitter2)
+    eventEmitter: EventEmitter2,
+  ) {
+    this.#markets.set('BTCEUR', new Market(eventEmitter, 'BTCEUR'));
   }
 
   [Symbol.iterator](): Iterator<Market> {
     return this.#markets.values();
-  }
-
-  onPriceChanged(): Observable<Market> {
-    return new Observable<Market>(subscriber => {
-      this.#markets.forEach(market => market.onPriceChanged().subscribe(subscriber));
-    });
   }
 
   get(pair: string): Market {

@@ -22,10 +22,12 @@
     "@exchange-simulator/common": "*",
     "@nestjs/common": "9.4.0",
     "@nestjs/core": "9.4.0",
+    "@nestjs/event-emitter": "1.4.1",
     "@nestjs/platform-express": "9.4.0",
     "dayjs": "1.11.7",
     "decimal.js": "10.4.3",
     "json-stable-stringify": "1.0.2",
+    "reflect-metadata": "0.1.13",
     "rxjs": "7.8.0"
   },
   "devDependencies": {
@@ -33,7 +35,6 @@
     "@nestjs/schematics": "9.1.0",
     "@nestjs/testing": "9.4.0",
     "@types/json-stable-stringify": "1.0.34",
-    "reflect-metadata": "0.1.13",
     "typescript": "5.0.4",
     "vitest": "0.30.1"
   }

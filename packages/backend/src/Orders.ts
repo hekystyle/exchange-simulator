@@ -1,9 +1,10 @@
 import { Inject } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Accounts } from './Accounts.js';
 import { LimitOrder, LimitOrderConfig } from './LimitOrder.js';
+import { Market } from './Market.js';
 import { MarketOrder, MarketOrderConfig } from './MarketOrder.js';
 import { Markets } from './Markets.js';
-import type { Market } from './Market.js';
 
 export type Order = MarketOrder | LimitOrder;
 
@@ -17,8 +18,10 @@ export class Orders implements Iterable<Order> {
     public readonly accounts: Accounts,
     @Inject(Markets)
     public readonly markets: Markets,
+    @Inject(EventEmitter2)
+    public readonly eventEmitter: EventEmitter2,
   ) {
-    markets.onPriceChanged().subscribe(this.handlePriceChange.bind(this));
+    eventEmitter.addListener(Market.PRICE_CHANGED, this.handlePriceChange.bind(this));
   }
 
   [Symbol.iterator]() {

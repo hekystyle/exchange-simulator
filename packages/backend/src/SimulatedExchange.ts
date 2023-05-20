@@ -1,26 +1,17 @@
 import { Inject } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import dayjs, { Dayjs } from 'dayjs';
-import { Observable, Subject } from 'rxjs';
 import { Accounts } from './Accounts.js';
 import { Markets } from './Markets.js';
 import { Orders } from './Orders.js';
 import type { Candle } from './data/BTCEUR.js';
 
-export interface Exchange {
-  accounts: Accounts;
-  orders: Orders;
-  markets: Markets;
-  onTick(): Observable<[Exchange, Date]>;
-  onSimulationFinishing(): Observable<Exchange>;
-  onSimulationFinished(): Observable<[Exchange, Date]>;
-}
+export class SimulatedExchange {
+  static readonly SIMULATION_FINISHED = 'exchange.simulationFinished' as const;
 
-export class SimulatedExchange implements Exchange {
-  #onTick = new Subject<[Exchange, Date]>();
+  static readonly SIMULATION_FINISHING = 'exchange.simulationFinishing' as const;
 
-  #onSimulationFinishing = new Subject<Exchange>();
-
-  #onSimulationFinished = new Subject<[Exchange, Date]>();
+  static readonly TICK = 'exchange.tick' as const;
 
   constructor(
     @Inject(Accounts)
@@ -29,19 +20,9 @@ export class SimulatedExchange implements Exchange {
     public readonly markets: Markets,
     @Inject(Orders)
     public readonly orders: Orders,
+    @Inject(EventEmitter2)
+    public readonly eventEmitter: EventEmitter2,
   ) {}
-
-  onTick(): Observable<[Exchange, Date]> {
-    return this.#onTick.asObservable();
-  }
-
-  onSimulationFinishing(): Observable<Exchange> {
-    return this.#onSimulationFinishing.asObservable();
-  }
-
-  onSimulationFinished(): Observable<[Exchange, Date]> {
-    return this.#onSimulationFinished.asObservable();
-  }
 
   simulate({ candles, pair }: { candles: Candle[]; pair: 'BTCEUR' }) {
     const market = this.markets.get(pair);
@@ -49,7 +30,7 @@ export class SimulatedExchange implements Exchange {
     const lastDate = candles.reduce<Dayjs>((_, candle) => {
       const date = dayjs(candle.date);
 
-      this.#onTick.next([this, date.toDate()]);
+      this.eventEmitter.emit(SimulatedExchange.TICK, [this, date.toDate()]);
 
       market.open(candle.open, date.toDate());
 
@@ -64,10 +45,10 @@ export class SimulatedExchange implements Exchange {
       return date;
     }, dayjs());
 
-    this.#onSimulationFinishing.next(this);
+    this.eventEmitter.emit(SimulatedExchange.SIMULATION_FINISHING, this);
 
     this.orders.cancelAll();
 
-    this.#onSimulationFinished.next([this, lastDate.add(1, 'day').toDate()]);
+    this.eventEmitter.emit(SimulatedExchange.SIMULATION_FINISHED, [this, lastDate.add(1, 'day').toDate()]);
   }
 }

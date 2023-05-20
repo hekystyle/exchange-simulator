@@ -1,9 +1,9 @@
-import { Subject, Observable } from 'rxjs';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 export class Market {
-  #onOpened = new Subject<Market>();
+  static readonly OPENED = 'market.opened' as const;
 
-  #onPriceChanged = new Subject<Market>();
+  static readonly PRICE_CHANGED = 'market.priceChanged' as const;
 
   #isOpen = false;
 
@@ -11,7 +11,7 @@ export class Market {
 
   #currentDate: Date | undefined = undefined;
 
-  constructor(public readonly name: 'BTCEUR') {}
+  constructor(private readonly eventEmitter: EventEmitter2, public readonly name: 'BTCEUR') {}
 
   get currentPrice(): number {
     if (!this.#currentPrice) {
@@ -27,14 +27,6 @@ export class Market {
     return this.#currentDate;
   }
 
-  onOpened(): Observable<Market> {
-    return this.#onOpened.asObservable();
-  }
-
-  onPriceChanged(): Observable<Market> {
-    return this.#onPriceChanged.asObservable();
-  }
-
   open(price: number, date: Date): this {
     if (this.#isOpen) {
       throw new Error('Market is already open');
@@ -42,8 +34,8 @@ export class Market {
     this.#isOpen = true;
     this.#currentPrice = price;
     this.#currentDate = date;
-    this.#onOpened.next(this);
-    this.#onPriceChanged.next(this);
+    this.eventEmitter.emit(Market.OPENED, this);
+    this.eventEmitter.emit(Market.PRICE_CHANGED, this);
     return this;
   }
 
@@ -52,7 +44,7 @@ export class Market {
       throw new Error('Market is not open');
     }
     this.#currentPrice = price;
-    this.#onPriceChanged.next(this);
+    this.eventEmitter.emit(Market.PRICE_CHANGED, this);
     return this;
   }
 
