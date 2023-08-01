@@ -1,6 +1,7 @@
 import { Inject, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import dayjs from 'dayjs';
+import { OrderSide } from './BaseOrder.js';
 import { limitPrices } from './limitPrices.js';
 import { Market } from './Market.js';
 import { SimulatedExchange } from './SimulatedExchange.js';
@@ -36,7 +37,7 @@ export class StrategyEnhancedDCA {
         if (wallets.EUR.balance > 0)
           exchange.orders.create({
             type: 'market',
-            direction: 'buy',
+            side: OrderSide.Buy,
             owner: account.owner,
             pair: { base: 'BTC', quote: 'EUR' },
             sellingAmount: wallets.EUR.balance,
@@ -52,7 +53,7 @@ export class StrategyEnhancedDCA {
         limitPrices(currentPrice, availableFunds, sellingAmountPerOrder).forEach(price => {
           exchange.orders.create({
             type: 'limit',
-            direction: 'buy',
+            side: OrderSide.Buy,
             owner: account.owner,
             pair: { base: 'BTC', quote: 'EUR' },
             limitPrice: price,
@@ -68,7 +69,7 @@ export class StrategyEnhancedDCA {
       if (wallets.EUR.balance > 0)
         sender.orders.create({
           type: 'market',
-          direction: 'buy',
+          side: OrderSide.Buy,
           owner: account.owner,
           pair: { base: 'BTC', quote: 'EUR' },
           sellingAmount: wallets.EUR.balance,

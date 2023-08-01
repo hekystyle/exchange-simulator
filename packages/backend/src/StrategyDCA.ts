@@ -3,6 +3,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import dayjs from 'dayjs';
 import { Decimal } from 'decimal.js';
 import { Accounts } from './Accounts.js';
+import { OrderSide } from './BaseOrder.js';
 import { Market } from './Market.js';
 import { Orders } from './Orders.js';
 
@@ -41,7 +42,7 @@ export class StrategyDCA {
       if (wallets.EUR.balance > 0)
         this.orders.create({
           type: 'market',
-          direction: 'buy',
+          side: OrderSide.Buy,
           pair: { base: 'BTC', quote: 'EUR' },
           owner: account.owner,
           sellingAmount: Math.min(this.#amountPerDay, wallets.EUR.balance),

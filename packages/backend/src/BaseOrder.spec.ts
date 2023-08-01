@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import { BaseOrder } from './BaseOrder.js';
+import { BaseOrder, OrderSide } from './BaseOrder.js';
 import { Wallet } from './Wallet.js';
 
 it.each([-1, 0])('should not allow sell negative or zero amount', amount => {
@@ -8,7 +8,7 @@ it.each([-1, 0])('should not allow sell negative or zero amount', amount => {
       new BaseOrder(
         {
           type: 'base',
-          direction: 'buy',
+          side: OrderSide.Buy,
           owner: 'owner',
           pair: { base: 'BTC', quote: 'EUR' },
           sellingAmount: amount,
@@ -26,7 +26,7 @@ it('should not allow to sell more than balance', () => {
       new BaseOrder(
         {
           type: 'base',
-          direction: 'buy',
+          side: OrderSide.Buy,
           owner: 'owner',
           pair: { base: 'BTC', quote: 'EUR' },
           sellingAmount: 101,

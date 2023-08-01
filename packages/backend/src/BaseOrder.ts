@@ -6,9 +6,14 @@ interface TradingPair<T extends [string, string]> {
   quote: T[1];
 }
 
+export enum OrderSide {
+  Buy = 'buy',
+  Sell = 'sell',
+}
+
 export interface BaseOrderConfig {
   type: string;
-  direction: 'buy';
+  side: OrderSide.Buy;
   owner: string;
   pair: TradingPair<['BTC', 'EUR']>;
   sellingAmount: number;
