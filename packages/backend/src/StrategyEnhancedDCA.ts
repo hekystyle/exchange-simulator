@@ -3,8 +3,8 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import dayjs from 'dayjs';
 import { OrderSide } from './BaseOrder.js';
 import { limitPrices } from './limitPrices.js';
-import { Market } from './Market.js';
-import { SimulatedExchange } from './SimulatedExchange.js';
+import { Market, MarketOpenedEvent } from './Market.js';
+import { SimulatedExchange, SimulationFinishingEvent } from './SimulatedExchange.js';
 
 export class StrategyEnhancedDCA {
   readonly #logger = new Logger(StrategyEnhancedDCA.name);
@@ -23,7 +23,9 @@ export class StrategyEnhancedDCA {
     const account = exchange.accounts.open('Enhanced DCA');
     const { wallets } = account;
 
-    this.eventEmitter.on(Market.OPENED, (market: Market) => {
+    this.eventEmitter.on(Market.OPENED, (event: MarketOpenedEvent) => {
+      const { sender: market } = event;
+
       if (market.name !== 'BTCEUR') return;
       const date = market.currentDate;
       const isStartOfMonth = dayjs(date).isSame(dayjs.utc(date).startOf('month'));
@@ -63,7 +65,9 @@ export class StrategyEnhancedDCA {
       }
     });
 
-    this.eventEmitter.on(SimulatedExchange.SIMULATION_FINISHING, (sender: SimulatedExchange) => {
+    this.eventEmitter.on(SimulatedExchange.SIMULATION_FINISHING, (event: SimulationFinishingEvent) => {
+      const { sender } = event;
+
       sender.orders.cancelByOwner(account.owner);
 
       if (wallets.EUR.balance > 0)

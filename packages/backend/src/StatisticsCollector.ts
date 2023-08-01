@@ -3,7 +3,7 @@ import { Inject } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Decimal } from 'decimal.js';
 import stableJsonStringify from 'json-stable-stringify';
-import { SimulatedExchange } from './SimulatedExchange.js';
+import { TickEvent, SimulatedExchange } from './SimulatedExchange.js';
 
 export class StatisticsCollector {
   #series = new Map<string, Serie>();
@@ -16,7 +16,9 @@ export class StatisticsCollector {
   }
 
   setup(): this {
-    const handler = ([sender, date]: [SimulatedExchange, Date]) => {
+    const handler = (event: TickEvent) => {
+      const { sender, date } = event;
+
       Array.from(sender.accounts).forEach(({ wallets, owner }) => {
         Array.from(wallets).forEach(wallet => {
           const { currency, balance } = wallet;
