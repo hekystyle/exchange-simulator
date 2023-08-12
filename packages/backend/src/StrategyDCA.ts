@@ -35,7 +35,7 @@ export class StrategyDCA {
       const isStartOfMonth = dayjs(date).isSame(dayjs.utc(date).startOf('month'));
 
       if (isStartOfMonth) {
-        this.#logger.log('start of month');
+        this.#logger.debug(`start of month ${date.toISOString()}`);
 
         wallets.EUR.deposit(100);
         this.#amountPerDay = Decimal.div(wallets.EUR.balance, dayjs(date).daysInMonth()).toDecimalPlaces(2).toNumber();

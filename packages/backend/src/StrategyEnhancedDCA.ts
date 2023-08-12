@@ -31,7 +31,7 @@ export class StrategyEnhancedDCA {
       const isStartOfMonth = dayjs(date).isSame(dayjs.utc(date).startOf('month'));
 
       if (isStartOfMonth) {
-        this.#logger.log('start of month');
+        this.#logger.debug(`start of month ${date.toISOString()}`);
 
         exchange.orders.cancelByOwner(account.owner);
 
