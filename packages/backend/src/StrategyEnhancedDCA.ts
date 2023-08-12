@@ -1,9 +1,11 @@
 import { Inject, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import dayjs from 'dayjs';
+import { Accounts } from './Accounts.js';
 import { OrderSide } from './BaseOrder.js';
 import { limitPrices } from './limitPrices.js';
-import { Market, MarketOpenedEvent } from './Market.js';
+import { MarketOpenedEvent } from './Market.js';
+import { Orders } from './Orders.js';
 import { SimulatedExchange, SimulationFinishingEvent } from './SimulatedExchange.js';
 
 export class StrategyEnhancedDCA {
@@ -14,16 +16,19 @@ export class StrategyEnhancedDCA {
     public readonly exchange: SimulatedExchange,
     @Inject(EventEmitter2)
     private readonly eventEmitter: EventEmitter2,
+    @Inject(Accounts)
+    private readonly accounts: Accounts,
+    @Inject(Orders)
+    private readonly orders: Orders,
   ) {}
 
   setup(sellingAmountPerOrder: number) {
     this.#logger.debug(this.setup.name);
-    const { exchange } = this;
 
-    const account = exchange.accounts.open('Enhanced DCA');
+    const account = this.accounts.open('Enhanced DCA');
     const { wallets } = account;
 
-    this.eventEmitter.on(Market.OPENED, (event: MarketOpenedEvent) => {
+    this.eventEmitter.on(MarketOpenedEvent.ID, (event: MarketOpenedEvent) => {
       const { sender: market } = event;
 
       if (market.name !== 'BTCEUR') return;
@@ -33,11 +38,11 @@ export class StrategyEnhancedDCA {
       if (isStartOfMonth) {
         this.#logger.debug(`start of month ${date.toISOString()}`);
 
-        exchange.orders.cancelByOwner(account.owner);
+        this.orders.cancelByOwner(account.owner);
 
         // create market order for remaining funds
         if (wallets.EUR.balance > 0)
-          exchange.orders.create({
+          this.orders.create({
             type: 'market',
             side: OrderSide.Buy,
             owner: account.owner,
@@ -53,7 +58,7 @@ export class StrategyEnhancedDCA {
         const availableFunds = wallets.EUR.balance;
 
         limitPrices(currentPrice, availableFunds, sellingAmountPerOrder).forEach(price => {
-          exchange.orders.create({
+          this.orders.create({
             type: 'limit',
             side: OrderSide.Buy,
             owner: account.owner,
@@ -65,13 +70,11 @@ export class StrategyEnhancedDCA {
       }
     });
 
-    this.eventEmitter.on(SimulatedExchange.SIMULATION_FINISHING, (event: SimulationFinishingEvent) => {
-      const { sender } = event;
-
-      sender.orders.cancelByOwner(account.owner);
+    this.eventEmitter.on(SimulationFinishingEvent.ID, () => {
+      this.orders.cancelByOwner(account.owner);
 
       if (wallets.EUR.balance > 0)
-        sender.orders.create({
+        this.orders.create({
           type: 'market',
           side: OrderSide.Buy,
           owner: account.owner,

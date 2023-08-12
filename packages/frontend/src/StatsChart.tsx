@@ -1,14 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
+import { FC, useEffect } from 'react';
 import { Chart } from './Chart.jsx';
+import { getBaseApiUrl } from './fetch.js';
 import type { Metadata, Serie, Source } from '@exchange-simulator/common';
 import type { SeriesLineOptions } from 'highcharts';
-import type { FC } from 'react';
-
-const getBaseApiUrl = (): URL => {
-  const url = new URL(window.location.href);
-  url.port = '3000';
-  return url;
-};
 
 const fetchStats = async (signal?: AbortSignal): Promise<Serie[]> => {
   const url = new URL('/statistics', getBaseApiUrl());
@@ -30,9 +25,20 @@ export const StatsChart: FC = () => {
   const { data, refetch } = useQuery<Serie[]>(['statistics'], async ({ signal }) => await fetchStats(signal), {
     suspense: true,
   });
+
   const handleRefreshButtonClick = () => {
     refetch().catch(error => console.error(error));
   };
+
+  useEffect(() => {
+    const eventSource = new EventSource(new URL('/simulation/sse', getBaseApiUrl()));
+    eventSource.onerror = console.error;
+    eventSource.addEventListener('simulation.finished', () => {
+      refetch().catch(error => console.error(error));
+    });
+    return () => eventSource.close();
+  }, []);
+
   return (
     <>
       <button type="button" onClick={handleRefreshButtonClick}>

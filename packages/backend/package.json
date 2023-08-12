@@ -28,7 +28,8 @@
     "decimal.js": "10.4.3",
     "json-stable-stringify": "1.0.2",
     "reflect-metadata": "0.1.13",
-    "rxjs": "7.8.0"
+    "rxjs": "7.8.0",
+    "zod": "3.21.4"
   },
   "devDependencies": {
     "@nestjs/cli": "9.4.2",
