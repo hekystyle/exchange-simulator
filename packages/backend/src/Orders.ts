@@ -2,7 +2,7 @@ import { Inject } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Accounts } from './Accounts.js';
 import { LimitOrder, LimitOrderConfig } from './LimitOrder.js';
-import { Market } from './Market.js';
+import { Market, MarketPriceChangedEvent } from './Market.js';
 import { MarketOrder, MarketOrderConfig } from './MarketOrder.js';
 import { Markets } from './Markets.js';
 
@@ -64,7 +64,9 @@ export class Orders implements Iterable<Order> {
     return this;
   }
 
-  private handlePriceChange(market: Market) {
+  private handlePriceChange(event: MarketPriceChangedEvent) {
+    const { sender: market } = event;
+
     this.#orders.forEach(
       order =>
         order.status === 'open' &&

@@ -1,4 +1,10 @@
+/* eslint-disable max-classes-per-file */
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Event } from './Event.js';
+
+export class MarketOpenedEvent extends Event<Market> {}
+
+export class MarketPriceChangedEvent extends Event<Market> {}
 
 export class Market {
   static readonly OPENED = 'market.opened' as const;
@@ -34,8 +40,8 @@ export class Market {
     this.#isOpen = true;
     this.#currentPrice = price;
     this.#currentDate = date;
-    this.eventEmitter.emit(Market.OPENED, this);
-    this.eventEmitter.emit(Market.PRICE_CHANGED, this);
+    this.eventEmitter.emit(Market.OPENED, new MarketOpenedEvent(this));
+    this.eventEmitter.emit(Market.PRICE_CHANGED, new MarketPriceChangedEvent(this));
     return this;
   }
 
@@ -44,7 +50,7 @@ export class Market {
       throw new Error('Market is not open');
     }
     this.#currentPrice = price;
-    this.eventEmitter.emit(Market.PRICE_CHANGED, this);
+    this.eventEmitter.emit(Market.PRICE_CHANGED, new MarketPriceChangedEvent(this));
     return this;
   }
 

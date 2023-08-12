@@ -1,10 +1,20 @@
+/* eslint-disable max-classes-per-file */
 import { Inject } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import dayjs, { Dayjs } from 'dayjs';
 import { Accounts } from './Accounts.js';
+import { Event } from './Event.js';
 import { Markets } from './Markets.js';
 import { Orders } from './Orders.js';
 import type { Candle } from './data/BTCEUR.js';
+
+export class TickEvent extends Event<SimulatedExchange> {
+  constructor(sender: SimulatedExchange, public readonly date: Date) {
+    super(sender);
+  }
+}
+
+export class SimulationFinishingEvent extends Event<SimulatedExchange> {}
 
 export class SimulatedExchange {
   static readonly SIMULATION_FINISHED = 'exchange.simulationFinished' as const;
@@ -30,7 +40,7 @@ export class SimulatedExchange {
     const lastDate = candles.reduce<Dayjs>((_, candle) => {
       const date = dayjs(candle.date);
 
-      this.eventEmitter.emit(SimulatedExchange.TICK, [this, date.toDate()]);
+      this.eventEmitter.emit(SimulatedExchange.TICK, new TickEvent(this, date.toDate()));
 
       market.open(candle.open, date.toDate());
 
@@ -45,10 +55,10 @@ export class SimulatedExchange {
       return date;
     }, dayjs());
 
-    this.eventEmitter.emit(SimulatedExchange.SIMULATION_FINISHING, this);
+    this.eventEmitter.emit(SimulatedExchange.SIMULATION_FINISHING, new SimulationFinishingEvent(this));
 
     this.orders.cancelAll();
 
-    this.eventEmitter.emit(SimulatedExchange.SIMULATION_FINISHED, [this, lastDate.add(1, 'day').toDate()]);
+    this.eventEmitter.emit(SimulatedExchange.SIMULATION_FINISHED, new TickEvent(this, lastDate.add(1, 'day').toDate()));
   }
 }
