@@ -19,8 +19,8 @@
     "check-types": "lerna run check-types",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "start:be": "lerna run start --scope @exchange-simulator/backend",
-    "start:fe": "lerna run start --scope @exchange-simulator/frontend",
+    "start:be": "lerna run start --scope @app/backend",
+    "start:fe": "lerna run start --scope @app/frontend",
     "test": "lerna run test"
   },
   "devDependencies": {

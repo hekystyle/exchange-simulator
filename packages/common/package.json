@@ -1,5 +1,5 @@
 {
-  "name": "@exchange-simulator/common",
+  "name": "@app/common",
   "version": "0.0.0",
   "description": "Common library for exchange simulator",
   "author": "Tomáš Hekrla <tomas@heky.eu>",

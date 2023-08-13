@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { FC, useEffect } from 'react';
 import { Chart } from './Chart.jsx';
 import { getBaseApiUrl } from './fetch.js';
-import type { Metadata, Serie, Source } from '@exchange-simulator/common';
+import type { Metadata, Serie, Source } from '@app/common';
 import type { SeriesLineOptions } from 'highcharts';
 
 const fetchStats = async (signal?: AbortSignal): Promise<Serie[]> => {

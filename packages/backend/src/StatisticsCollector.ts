@@ -1,4 +1,4 @@
-import { Metadata, Serie, compactPoint } from '@exchange-simulator/common';
+import { Metadata, Serie, compactPoint } from '@app/common';
 import { Inject } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Decimal } from 'decimal.js';
