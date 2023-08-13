@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import { Decimal } from 'decimal.js';
 import { Accounts } from './Accounts.js';
 import { OrderSide } from './BaseOrder.js';
-import { Market, MarketOpenedEvent } from './Market.js';
+import { MarketOpenedEvent } from './Market.js';
 import { Orders } from './Orders.js';
 
 export class StrategyDCA {
@@ -27,7 +27,7 @@ export class StrategyDCA {
     const account = this.accounts.open('DCA');
     const { wallets } = account;
 
-    this.eventEmitter.on(Market.OPENED, (event: MarketOpenedEvent) => {
+    this.eventEmitter.on(MarketOpenedEvent.ID, (event: MarketOpenedEvent) => {
       const { sender: market } = event;
 
       if (market.name !== 'BTCEUR') return;
@@ -35,7 +35,7 @@ export class StrategyDCA {
       const isStartOfMonth = dayjs(date).isSame(dayjs.utc(date).startOf('month'));
 
       if (isStartOfMonth) {
-        this.#logger.log('start of month');
+        this.#logger.debug(`start of month ${date.toISOString()}`);
 
         wallets.EUR.deposit(100);
         this.#amountPerDay = Decimal.div(wallets.EUR.balance, dayjs(date).daysInMonth()).toDecimalPlaces(2).toNumber();

@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { it, expect, beforeAll } from 'vitest';
+import { Accounts } from './Accounts.js';
 import { AppModule } from './app.module.js';
 import { BTCEUR_YEAR_DAILY_CANDLES } from './data/BTCEUR.js';
 import { SimulatedExchange } from './SimulatedExchange.js';
@@ -19,13 +20,15 @@ beforeAll(async () => {
 
 it('should execute', async () => {
   const exchange = app.get(SimulatedExchange);
+  const accounts = app.get(Accounts);
 
-  exchange.simulate({
+  await exchange.init({
     pair: 'BTCEUR',
     candles: BTCEUR_YEAR_DAILY_CANDLES,
   });
+  await exchange.start(undefined);
 
-  expect(exchange.accounts.toJSON()).toStrictEqual([
+  expect(accounts.toJSON()).toStrictEqual([
     {
       wallets: {
         BTC: {

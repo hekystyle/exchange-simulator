@@ -1,12 +1,5 @@
 import dayjs from 'dayjs';
-
-export interface Candle {
-  date: Date;
-  open: number;
-  high: number;
-  low: number;
-  close: number;
-}
+import { Candle } from '../candle.js';
 
 export const BTCEUR_YEAR_DAILY_CANDLES: Candle[] = [
   {

@@ -3,7 +3,9 @@ import { Inject } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Decimal } from 'decimal.js';
 import stableJsonStringify from 'json-stable-stringify';
-import { TickEvent, SimulatedExchange } from './SimulatedExchange.js';
+import { Accounts } from './Accounts.js';
+import { Orders } from './Orders.js';
+import { SimulationFinishedEvent, TickEvent } from './SimulatedExchange.js';
 
 export class StatisticsCollector {
   #series = new Map<string, Serie>();
@@ -11,15 +13,17 @@ export class StatisticsCollector {
   constructor(
     @Inject(EventEmitter2)
     private readonly eventEmitter: EventEmitter2,
+    @Inject(Orders)
+    private readonly orders: Orders,
+    @Inject(Accounts)
+    private readonly accounts: Accounts,
   ) {
     this.setup();
   }
 
   setup(): this {
-    const handler = (event: TickEvent) => {
-      const { sender, date } = event;
-
-      Array.from(sender.accounts).forEach(({ wallets, owner }) => {
+    const collectStatisticsForTimePoint = (date: Date) => {
+      Array.from(this.accounts).forEach(({ wallets, owner }) => {
         Array.from(wallets).forEach(wallet => {
           const { currency, balance } = wallet;
           this.#getOrCreateSerie({ owner, unit: currency, source: 'wallet' }).data.push(
@@ -29,11 +33,9 @@ export class StatisticsCollector {
             }),
           );
 
-          const reservedBalanceInOpenedOrders = Array.from(sender.orders)
+          const reservedBalanceInOpenedOrders = Array.from(this.orders)
             .filter(order => order.sellingWallet === wallet && order.status === 'open')
-            .reduce((acc, order) => {
-              return Decimal.add(acc, order.config.sellingAmount);
-            }, new Decimal(0))
+            .reduce((acc, order) => acc.plus(order.config.sellingAmount), new Decimal(0))
             .toNumber();
 
           this.#getOrCreateSerie({ owner, unit: currency, source: 'orders' }).data.push(
@@ -46,8 +48,8 @@ export class StatisticsCollector {
       });
     };
 
-    this.eventEmitter.on(SimulatedExchange.TICK, handler);
-    this.eventEmitter.on(SimulatedExchange.SIMULATION_FINISHED, handler);
+    this.eventEmitter.on(TickEvent.ID, (event: TickEvent) => collectStatisticsForTimePoint(event.candle.date));
+    this.eventEmitter.on(SimulationFinishedEvent.ID, () => collectStatisticsForTimePoint(new Date()));
     return this;
   }
 

@@ -2,15 +2,15 @@
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Event } from './Event.js';
 
-export class MarketOpenedEvent extends Event<Market> {}
+export class MarketOpenedEvent extends Event<Market> {
+  static ID = 'market.opened' as const;
+}
 
-export class MarketPriceChangedEvent extends Event<Market> {}
+export class MarketPriceChangedEvent extends Event<Market> {
+  static ID = 'market.priceChanged' as const;
+}
 
 export class Market {
-  static readonly OPENED = 'market.opened' as const;
-
-  static readonly PRICE_CHANGED = 'market.priceChanged' as const;
-
   #isOpen = false;
 
   #currentPrice: number | undefined = undefined;
@@ -40,8 +40,8 @@ export class Market {
     this.#isOpen = true;
     this.#currentPrice = price;
     this.#currentDate = date;
-    this.eventEmitter.emit(Market.OPENED, new MarketOpenedEvent(this));
-    this.eventEmitter.emit(Market.PRICE_CHANGED, new MarketPriceChangedEvent(this));
+    this.eventEmitter.emit(MarketOpenedEvent.ID, new MarketOpenedEvent(this));
+    this.eventEmitter.emit(MarketPriceChangedEvent.ID, new MarketPriceChangedEvent(this));
     return this;
   }
 
@@ -50,7 +50,7 @@ export class Market {
       throw new Error('Market is not open');
     }
     this.#currentPrice = price;
-    this.eventEmitter.emit(Market.PRICE_CHANGED, new MarketPriceChangedEvent(this));
+    this.eventEmitter.emit(MarketPriceChangedEvent.ID, new MarketPriceChangedEvent(this));
     return this;
   }
 
