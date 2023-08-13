@@ -7,7 +7,11 @@ export interface LimitOrderConfig extends BaseOrderConfig {
 }
 
 export class LimitOrder extends BaseOrder {
-  constructor(public override readonly config: LimitOrderConfig, sellingWallet: Wallet, buyingWallet: Wallet) {
+  constructor(
+    public override readonly config: LimitOrderConfig,
+    sellingWallet: Wallet,
+    buyingWallet: Wallet,
+  ) {
     super(config, sellingWallet, buyingWallet);
   }
 

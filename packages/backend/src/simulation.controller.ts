@@ -9,7 +9,10 @@ import { SimulatedExchange, SimulationFinishedEvent, TickEvent } from './Simulat
 export class SimulationController {
   private readonly logger = new Logger(SimulationController.name);
 
-  constructor(private readonly exchange: SimulatedExchange, private readonly eventEmitter: EventEmitter2) {}
+  constructor(
+    private readonly exchange: SimulatedExchange,
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
 
   @Post('/init')
   async init() {

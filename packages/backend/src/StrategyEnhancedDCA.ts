@@ -6,14 +6,12 @@ import { OrderSide } from './BaseOrder.js';
 import { limitPrices } from './limitPrices.js';
 import { MarketOpenedEvent } from './Market.js';
 import { Orders } from './Orders.js';
-import { SimulatedExchange, SimulationFinishingEvent } from './SimulatedExchange.js';
+import { SimulationFinishingEvent } from './SimulatedExchange.js';
 
 export class StrategyEnhancedDCA {
   readonly #logger = new Logger(StrategyEnhancedDCA.name);
 
   constructor(
-    @Inject(SimulatedExchange)
-    public readonly exchange: SimulatedExchange,
     @Inject(EventEmitter2)
     private readonly eventEmitter: EventEmitter2,
     @Inject(Accounts)

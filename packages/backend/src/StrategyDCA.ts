@@ -14,9 +14,9 @@ export class StrategyDCA {
 
   constructor(
     @Inject(Accounts)
-    public readonly accounts: Accounts,
+    private readonly accounts: Accounts,
     @Inject(Orders)
-    public readonly orders: Orders,
+    private readonly orders: Orders,
     @Inject(EventEmitter2)
     private readonly eventEmitter: EventEmitter2,
   ) {}
