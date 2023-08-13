@@ -3,7 +3,10 @@ import { Decimal } from 'decimal.js';
 export class Wallet {
   #balance = 0;
 
-  constructor(public readonly currency: string, initialBalance = 0) {
+  constructor(
+    public readonly currency: string,
+    initialBalance = 0,
+  ) {
     this.#balance = initialBalance;
   }
 

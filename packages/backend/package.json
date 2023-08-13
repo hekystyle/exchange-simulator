@@ -19,24 +19,24 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@exchange-simulator/common": "*",
-    "@nestjs/common": "9.4.0",
-    "@nestjs/core": "9.4.0",
-    "@nestjs/event-emitter": "1.4.1",
-    "@nestjs/platform-express": "9.4.0",
-    "dayjs": "1.11.7",
+    "@exchange-simulator/common": "workspace:*",
+    "@nestjs/common": "10.1.3",
+    "@nestjs/core": "10.1.3",
+    "@nestjs/event-emitter": "2.0.1",
+    "@nestjs/platform-express": "10.1.3",
+    "dayjs": "1.11.9",
     "decimal.js": "10.4.3",
     "json-stable-stringify": "1.0.2",
     "reflect-metadata": "0.1.13",
-    "rxjs": "7.8.0",
+    "rxjs": "7.8.1",
     "zod": "3.21.4"
   },
   "devDependencies": {
-    "@nestjs/cli": "9.4.2",
-    "@nestjs/schematics": "9.1.0",
-    "@nestjs/testing": "9.4.0",
+    "@nestjs/cli": "10.1.11",
+    "@nestjs/schematics": "10.0.2",
+    "@nestjs/testing": "10.1.3",
     "@types/json-stable-stringify": "1.0.34",
-    "typescript": "5.0.4",
-    "vitest": "0.30.1"
+    "typescript": "5.1.6",
+    "vitest": "0.34.1"
   }
 }

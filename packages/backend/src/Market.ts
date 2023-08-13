@@ -17,7 +17,10 @@ export class Market {
 
   #currentDate: Date | undefined = undefined;
 
-  constructor(private readonly eventEmitter: EventEmitter2, public readonly name: 'BTCEUR') {}
+  constructor(
+    private readonly eventEmitter: EventEmitter2,
+    public readonly name: 'BTCEUR',
+  ) {}
 
   get currentPrice(): number {
     if (!this.#currentPrice) {

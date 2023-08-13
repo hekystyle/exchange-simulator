@@ -7,7 +7,6 @@ import { SimulatedExchange } from './SimulatedExchange.js';
 import { SimulationController } from './simulation.controller.js';
 import { StatisticsController } from './statistics.controller.js';
 import { StatisticsCollector } from './StatisticsCollector.js';
-import { Strategies } from './strategies.service.js';
 import { StrategyDCA } from './StrategyDCA.js';
 import { StrategyEnhancedDCA } from './StrategyEnhancedDCA.js';
 
@@ -15,16 +14,7 @@ import { StrategyEnhancedDCA } from './StrategyEnhancedDCA.js';
   controllers: [StatisticsController, SimulationController],
   exports: [],
   imports: [EventEmitterModule.forRoot({ global: true })],
-  providers: [
-    Accounts,
-    Markets,
-    Orders,
-    SimulatedExchange,
-    StatisticsCollector,
-    Strategies,
-    StrategyDCA,
-    StrategyEnhancedDCA,
-  ],
+  providers: [Accounts, Markets, Orders, SimulatedExchange, StatisticsCollector, StrategyDCA, StrategyEnhancedDCA],
 })
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class -- NestJS module
 export class AppModule {}
