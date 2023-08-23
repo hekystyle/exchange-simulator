@@ -27,7 +27,6 @@ export class SimulationController {
   @Post('/start')
   start(@Body() body: unknown) {
     this.logger.debug('Starting simulation');
-    console.log('🚀 ~ file: simulation.controller.ts:28 ~ SimulationController ~ continue ~ body:', body);
     const { speed } = z.object({ speed: z.number().int().positive() }).parse(body);
     this.exchange.start(speed).catch(this.logger.error.bind(this.logger));
   }

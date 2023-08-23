@@ -1,0 +1,14 @@
+services:
+  db:
+    image: mongo
+    command: "--replSet local --bind_ip_all"
+    hostname: mongodb
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_REPLICA_SET_NAME: "local"
+    volumes:
+      - dbdata:/data/db
+
+volumes:
+  dbdata:

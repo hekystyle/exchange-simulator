@@ -1,6 +1,7 @@
 /* eslint-disable max-classes-per-file */
-import { Inject, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { PrismaClient } from '@prisma/client';
 import dayjs from 'dayjs';
 import { Candle } from './candle.js';
 import { Event } from './Event.js';
@@ -34,6 +35,7 @@ export class SimulationFinishedEvent extends Event<SimulatedExchange> {
   static ID = 'simulation.finished' as const;
 }
 
+@Injectable()
 export class SimulatedExchange {
   private readonly logger = new Logger(SimulatedExchange.name);
 
@@ -52,6 +54,7 @@ export class SimulatedExchange {
     private readonly strategyDCA: StrategyDCA,
     @Inject(StrategyEnhancedDCA)
     private readonly strategyEnhancedDCA: StrategyEnhancedDCA,
+    private readonly db: PrismaClient,
   ) {}
 
   async init(session: Session) {
@@ -69,14 +72,22 @@ export class SimulatedExchange {
     const { candles, pair } = this.session;
     const market = this.markets.get(pair);
 
-    let candle = candles.shift();
+    let candle = await this.db.candle.findFirst({
+      where: {
+        pair: 'BTCEUR',
+        interval: 3600,
+      },
+      orderBy: {
+        timestamp: 'asc',
+      },
+    });
 
     while (candle) {
-      const date = dayjs(candle.date);
+      const date = candle.timestamp;
 
-      this.logger.debug(`Simulating ${date.format('YYYY-MM-DD')}`);
+      this.logger.debug(`Simulating ${date.toISOString()}`);
 
-      market.open(candle.open, date.toDate());
+      market.open(candle.open, date);
 
       market.changePrice(candle.high);
 
@@ -95,7 +106,20 @@ export class SimulatedExchange {
 
       this.abortController.signal.throwIfAborted();
 
-      candle = candles.shift();
+      // eslint-disable-next-line no-await-in-loop -- it's by design
+      candle = await this.db.candle.findFirst({
+        where: {
+          pair: 'BTCEUR',
+          interval: 3600,
+        },
+        orderBy: {
+          timestamp: 'asc',
+        },
+        cursor: {
+          id: candle.id,
+        },
+        skip: 1,
+      });
     }
 
     this.eventEmitter.emit(SimulationFinishingEvent.ID, new SimulationFinishingEvent(this));
