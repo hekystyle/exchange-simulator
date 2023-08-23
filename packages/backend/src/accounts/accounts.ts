@@ -1,4 +1,4 @@
-import { Account, Owner } from './Account.js';
+import { Account, Owner } from './account.js';
 
 export class Accounts implements Iterable<Account> {
   #accounts = new Map<Owner, Account>();

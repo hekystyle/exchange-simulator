@@ -1,5 +1,5 @@
 import { Controller, Get, Inject } from '@nestjs/common';
-import { StatisticsCollector } from './StatisticsCollector.js';
+import { StatisticsCollector } from './statistics.collector.js';
 
 @Controller('statistics')
 export class StatisticsController {

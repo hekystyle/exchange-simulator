@@ -1,9 +1,9 @@
 import { Test } from '@nestjs/testing';
 import { it, expect, beforeAll } from 'vitest';
-import { Accounts } from './Accounts.js';
+import { Accounts } from './accounts/accounts.js';
 import { AppModule } from './app.module.js';
 import { BTCEUR_YEAR_DAILY_CANDLES } from './data/BTCEUR.js';
-import { SimulatedExchange } from './SimulatedExchange.js';
+import { SimulatedExchange } from './simulated-exchange.js';
 import type { INestApplication } from '@nestjs/common';
 
 let app: INestApplication;

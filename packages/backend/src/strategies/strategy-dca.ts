@@ -1,12 +1,13 @@
-import { Inject, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import dayjs from 'dayjs';
 import { Decimal } from 'decimal.js';
-import { Accounts } from './Accounts.js';
-import { OrderSide } from './BaseOrder.js';
-import { MarketOpenedEvent } from './Market.js';
-import { Orders } from './Orders.js';
+import { Accounts } from '../accounts/accounts.js';
+import { MarketOpenedEvent } from '../markets/market.js';
+import { OrderSide } from '../orders/base-order.js';
+import { Orders } from '../orders/orders.js';
 
+@Injectable()
 export class StrategyDCA {
   #amountPerDay = 0;
 

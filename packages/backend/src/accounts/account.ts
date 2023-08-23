@@ -1,4 +1,4 @@
-import { Wallets } from './Wallets.js';
+import { Wallets } from '../wallets/wallets.js';
 
 export type Owner = string;
 

@@ -1,4 +1,4 @@
-import { Wallet } from './Wallet.js';
+import { Wallet } from './wallet.js';
 
 type WalletsMap = {
   [Currency in 'EUR' | 'BTC']: Wallet;

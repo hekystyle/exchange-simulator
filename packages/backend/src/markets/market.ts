@@ -1,6 +1,6 @@
 /* eslint-disable max-classes-per-file */
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { Event } from './Event.js';
+import { Event } from '../Event.js';
 
 export class MarketOpenedEvent extends Event<Market> {
   static ID = 'market.opened' as const;

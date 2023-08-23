@@ -1,5 +1,5 @@
-import { BaseOrder, BaseOrderConfig } from './BaseOrder.js';
-import type { Wallet } from './Wallet.js';
+import { BaseOrder, BaseOrderConfig } from './base-order.js';
+import type { Wallet } from '../wallets/wallet.js';
 
 export interface LimitOrderConfig extends BaseOrderConfig {
   type: 'limit';

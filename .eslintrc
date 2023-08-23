@@ -36,6 +36,7 @@
     "n/no-missing-import": "off", // handled by TypeScript
     "@typescript-eslint/return-await": ["error", "always"],
     "@typescript-eslint/member-ordering": ["error"],
+    "@typescript-eslint/no-extraneous-class": ["error", { "allowWithDecorator": true }],
     "@typescript-eslint/no-empty-function": ["error", { "allow": ["private-constructors"] }],
     "@typescript-eslint/array-type": ["error", { "default": "array-simple", "readonly": "array-simple" }],
     "react/function-component-definition": [

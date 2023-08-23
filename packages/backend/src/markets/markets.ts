@@ -1,7 +1,8 @@
-import { Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { Market } from './Market.js';
+import { Market } from './market.js';
 
+@Injectable()
 export class Markets implements Iterable<Market> {
   #markets = new Map<string, Market>();
 

@@ -1,13 +1,14 @@
-import { Inject, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import dayjs from 'dayjs';
-import { Accounts } from './Accounts.js';
-import { OrderSide } from './BaseOrder.js';
-import { limitPrices } from './limitPrices.js';
-import { MarketOpenedEvent } from './Market.js';
-import { Orders } from './Orders.js';
-import { SimulationFinishingEvent } from './SimulatedExchange.js';
+import { Accounts } from '../accounts/accounts.js';
+import { limitPrices } from '../limit-prices.js';
+import { MarketOpenedEvent } from '../markets/market.js';
+import { OrderSide } from '../orders/base-order.js';
+import { Orders } from '../orders/orders.js';
+import { SimulationFinishingEvent } from '../simulated-exchange.js';
 
+@Injectable()
 export class StrategyEnhancedDCA {
   readonly #logger = new Logger(StrategyEnhancedDCA.name);
 

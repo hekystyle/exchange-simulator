@@ -3,7 +3,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Observable, filter, fromEvent, map, merge } from 'rxjs';
 import { z } from 'zod';
 import { BTCEUR_YEAR_DAILY_CANDLES } from './data/BTCEUR.js';
-import { SimulatedExchange, SimulationFinishedEvent, TickEvent } from './SimulatedExchange.js';
+import { SimulatedExchange, SimulationFinishedEvent, TickEvent } from './simulated-exchange.js';
 
 @Controller('/simulation')
 export class SimulationController {
@@ -27,7 +27,6 @@ export class SimulationController {
   @Post('/start')
   start(@Body() body: unknown) {
     this.logger.debug('Starting simulation');
-    console.log('🚀 ~ file: simulation.controller.ts:28 ~ SimulationController ~ continue ~ body:', body);
     const { speed } = z.object({ speed: z.number().int().positive() }).parse(body);
     this.exchange.start(speed).catch(this.logger.error.bind(this.logger));
   }
