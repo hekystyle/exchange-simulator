@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { Wallet } from './Wallet.js';
+import { Wallet } from './wallet.js';
 
 describe('withdraw', () => {
   it.each([[-1, 0]])('should  not allow to withdraw negative or zero amount', amount => {

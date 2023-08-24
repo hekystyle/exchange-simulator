@@ -1,13 +1,13 @@
 /* eslint-disable max-classes-per-file */
-import { Inject, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import dayjs from 'dayjs';
 import { Candle } from './candle.js';
 import { Event } from './Event.js';
-import { Markets } from './Markets.js';
-import { Orders } from './Orders.js';
-import { StrategyDCA } from './StrategyDCA.js';
-import { StrategyEnhancedDCA } from './StrategyEnhancedDCA.js';
+import { Markets } from './markets/markets.js';
+import { Orders } from './orders/orders.js';
+import { StrategyDCA } from './strategies/strategy-dca.js';
+import { StrategyEnhancedDCA } from './strategies/strategy-enhanced-dca.js';
 import { wait } from './utils/wait.js';
 
 interface Session {
@@ -34,6 +34,7 @@ export class SimulationFinishedEvent extends Event<SimulatedExchange> {
   static ID = 'simulation.finished' as const;
 }
 
+@Injectable()
 export class SimulatedExchange {
   private readonly logger = new Logger(SimulatedExchange.name);
 

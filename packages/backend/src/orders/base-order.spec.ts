@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest';
-import { BaseOrder, OrderSide } from './BaseOrder.js';
-import { Wallet } from './Wallet.js';
+import { Wallet } from '../wallets/wallet.js';
+import { BaseOrder, OrderSide } from './base-order.js';
 
 it.each([-1, 0])('should not allow sell negative or zero amount', amount => {
   expect(

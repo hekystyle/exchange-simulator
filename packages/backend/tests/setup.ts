@@ -1,1 +1,2 @@
-import '../src/dayjs';
+import 'reflect-metadata';
+import '../src/dayjs.js';

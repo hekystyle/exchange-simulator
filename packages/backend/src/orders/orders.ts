@@ -1,15 +1,16 @@
-import { Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { Accounts } from './Accounts.js';
-import { LimitOrder, LimitOrderConfig } from './LimitOrder.js';
-import { MarketPriceChangedEvent } from './Market.js';
-import { MarketOrder, MarketOrderConfig } from './MarketOrder.js';
-import { Markets } from './Markets.js';
+import { Accounts } from '../accounts/accounts.js';
+import { MarketPriceChangedEvent } from '../markets/market.js';
+import { Markets } from '../markets/markets.js';
+import { LimitOrder, LimitOrderConfig } from './limit-order.js';
+import { MarketOrder, MarketOrderConfig } from './market-order.js';
 
 export type Order = MarketOrder | LimitOrder;
 
 export type OrderConfig = MarketOrderConfig | LimitOrderConfig;
 
+@Injectable()
 export class Orders implements Iterable<Order> {
   #orders: Order[] = [];
 

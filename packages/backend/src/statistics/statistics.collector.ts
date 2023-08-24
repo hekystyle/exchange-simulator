@@ -1,12 +1,13 @@
 import { Metadata, Serie, compactPoint } from '@app/common';
-import { Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Decimal } from 'decimal.js';
 import stableJsonStringify from 'json-stable-stringify';
-import { Accounts } from './Accounts.js';
-import { Orders } from './Orders.js';
-import { SimulationFinishedEvent, TickEvent } from './SimulatedExchange.js';
+import { Accounts } from '../accounts/accounts.js';
+import { Orders } from '../orders/orders.js';
+import { SimulationFinishedEvent, TickEvent } from '../simulated-exchange.js';
 
+@Injectable()
 export class StatisticsCollector {
   #series = new Map<string, Serie>();
 
