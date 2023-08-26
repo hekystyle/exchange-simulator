@@ -6,8 +6,6 @@ import { Candle } from './candle.js';
 import { Event } from './Event.js';
 import { Markets } from './markets/markets.js';
 import { Orders } from './orders/orders.js';
-import { StrategyDCA } from './strategies/strategy-dca.js';
-import { StrategyEnhancedDCA } from './strategies/strategy-enhanced-dca.js';
 import { wait } from './utils/wait.js';
 
 interface Session {
@@ -49,16 +47,10 @@ export class SimulatedExchange {
     private readonly orders: Orders,
     @Inject(EventEmitter2)
     private readonly eventEmitter: EventEmitter2,
-    @Inject(StrategyDCA)
-    private readonly strategyDCA: StrategyDCA,
-    @Inject(StrategyEnhancedDCA)
-    private readonly strategyEnhancedDCA: StrategyEnhancedDCA,
   ) {}
 
   async init(session: Session) {
     if (this.session) throw new Error('Simulation already initialized');
-    this.strategyDCA.setup();
-    this.strategyEnhancedDCA.setup(1);
     this.session = session;
   }
 

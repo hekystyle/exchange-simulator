@@ -10,7 +10,7 @@ import { SimulationFinishingEvent } from '../simulated-exchange.js';
 
 @Injectable()
 export class StrategyEnhancedDCA {
-  readonly #logger = new Logger(StrategyEnhancedDCA.name);
+  private readonly logger = new Logger(StrategyEnhancedDCA.name);
 
   constructor(
     @Inject(EventEmitter2)
@@ -22,7 +22,7 @@ export class StrategyEnhancedDCA {
   ) {}
 
   setup(sellingAmountPerOrder: number) {
-    this.#logger.debug(this.setup.name);
+    this.logger.log('Setting up strategy...');
 
     const account = this.accounts.open('Enhanced DCA');
     const { wallets } = account;
@@ -35,7 +35,7 @@ export class StrategyEnhancedDCA {
       const isStartOfMonth = dayjs(date).isSame(dayjs.utc(date).startOf('month'));
 
       if (isStartOfMonth) {
-        this.#logger.debug(`start of month ${date.toISOString()}`);
+        this.logger.debug(`start of month ${date.toISOString()}`);
 
         this.orders.cancelByOwner(account.owner);
 

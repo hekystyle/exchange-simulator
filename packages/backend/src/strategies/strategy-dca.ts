@@ -1,3 +1,4 @@
+import assert from 'assert';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import dayjs from 'dayjs';
@@ -9,9 +10,9 @@ import { Orders } from '../orders/orders.js';
 
 @Injectable()
 export class StrategyDCA {
-  #amountPerDay = 0;
+  private readonly logger = new Logger(StrategyDCA.name);
 
-  readonly #logger = new Logger(StrategyDCA.name);
+  #amountPerDay = 0;
 
   constructor(
     @Inject(Accounts)
@@ -23,7 +24,7 @@ export class StrategyDCA {
   ) {}
 
   setup() {
-    this.#logger.debug(this.setup.name);
+    this.logger.log('Setting up strategy...');
 
     const account = this.accounts.open('DCA');
     const { wallets } = account;
@@ -36,7 +37,7 @@ export class StrategyDCA {
       const isStartOfMonth = dayjs(date).isSame(dayjs.utc(date).startOf('month'));
 
       if (isStartOfMonth) {
-        this.#logger.debug(`start of month ${date.toISOString()}`);
+        this.logger.debug(`start of month ${date.toISOString()}`);
 
         wallets.EUR.deposit(100);
         this.#amountPerDay = Decimal.div(wallets.EUR.balance, dayjs(date).daysInMonth()).toDecimalPlaces(2).toNumber();
