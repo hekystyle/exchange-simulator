@@ -49,7 +49,9 @@ export class StatisticsCollector {
       });
     };
 
-    this.eventEmitter.on(TickEvent.ID, (event: TickEvent) => collectStatisticsForTimePoint(event.candle.date));
+    this.eventEmitter.on(TickEvent.ID, (event: TickEvent) =>
+      collectStatisticsForTimePoint(event.candle.date),
+    );
     this.eventEmitter.on(SimulationFinishedEvent.ID, () => collectStatisticsForTimePoint(new Date()));
     return this;
   }
