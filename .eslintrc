@@ -49,7 +49,7 @@
   },
   "overrides": [
     {
-      "files": ["*.spec.ts", "*.test.ts", "vite.config.ts"],
+      "files": ["packages/*/tests/*.ts", "*.spec.ts", "*.test.ts", "vite.config.ts"],
       "plugins": ["vitest"],
       "extends": ["plugin:vitest/recommended"],
       "rules": {

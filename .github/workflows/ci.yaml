@@ -27,9 +27,11 @@ jobs:
         uses: actions/cache@v3
         with:
           path: node_modules
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock', 'packages/**/prisma/schema.prisma') }}
 
       - run: yarn install --immutable
+      - run: yarn prisma generate
+        working-directory: packages/backend
 
   lint:
     needs: [install, build]
@@ -46,15 +48,13 @@ jobs:
         uses: actions/cache@v3
         with:
           path: node_modules
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock', 'packages/**/prisma/schema.prisma') }}
 
       - name: Download build artifacts
         uses: actions/download-artifact@v3
         with:
           name: build-common
           path: packages/common/dist
-
-      - run: yarn install --immutable
 
       - run: yarn run lint
 
@@ -73,7 +73,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: node_modules
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock', 'packages/**/prisma/schema.prisma') }}
 
       - run: yarn build
 
@@ -98,7 +98,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: node_modules
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock', 'packages/**/prisma/schema.prisma') }}
 
       - name: Download build artifacts
         uses: actions/download-artifact@v3
