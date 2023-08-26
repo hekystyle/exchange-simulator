@@ -8,8 +8,6 @@ import { SimulationController } from './simulation.controller.js';
 import { StatisticsCollector } from './statistics/statistics.collector.js';
 import { StatisticsModule } from './statistics/statistics.module.js';
 import { StrategiesModule } from './strategies/strategies.module.js';
-import { StrategyDCA } from './strategies/strategy-dca.js';
-import { StrategyEnhancedDCA } from './strategies/strategy-enhanced-dca.js';
 
 @Module({
   controllers: [SimulationController],
@@ -22,6 +20,6 @@ import { StrategyEnhancedDCA } from './strategies/strategy-enhanced-dca.js';
     StatisticsModule,
     StrategiesModule,
   ],
-  providers: [SimulatedExchange, StatisticsCollector, StrategyDCA, StrategyEnhancedDCA],
+  providers: [SimulatedExchange, StatisticsCollector],
 })
 export class AppModule {}
