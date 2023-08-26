@@ -1,7 +1,9 @@
+import assert from 'assert';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import dayjs from 'dayjs';
 import { Decimal } from 'decimal.js';
+import { Account } from '../accounts/account.js';
 import { Accounts } from '../accounts/accounts.js';
 import { MarketOpenedEvent } from '../markets/market.js';
 import { OrderSide } from '../orders/base-order.js';
@@ -9,9 +11,11 @@ import { Orders } from '../orders/orders.js';
 
 @Injectable()
 export class StrategyDCA {
-  #amountPerDay = 0;
+  private readonly logger = new Logger(StrategyDCA.name);
 
-  readonly #logger = new Logger(StrategyDCA.name);
+  private account: Account | undefined;
+
+  #amountPerDay = 0;
 
   constructor(
     @Inject(Accounts)
@@ -23,33 +27,40 @@ export class StrategyDCA {
   ) {}
 
   setup() {
-    this.#logger.debug(this.setup.name);
+    this.logger.log('Setting up strategy...');
 
-    const account = this.accounts.open('DCA');
-    const { wallets } = account;
+    if (!this.account) {
+      this.logger.log('Opening account...');
+      this.account = this.accounts.open('DCA');
+    }
 
-    this.eventEmitter.on(MarketOpenedEvent.ID, (event: MarketOpenedEvent) => {
-      const { sender: market } = event;
+    this.eventEmitter.on(MarketOpenedEvent.ID, this.handleMarketOpened.bind(this));
+  }
 
-      if (market.name !== 'BTCEUR') return;
-      const date = market.currentDate;
-      const isStartOfMonth = dayjs(date).isSame(dayjs.utc(date).startOf('month'));
+  private handleMarketOpened(event: unknown) {
+    assert(event instanceof MarketOpenedEvent, `Event is not a ${MarketOpenedEvent.name}`);
+    assert(this.account, 'Account not opened');
+    const { sender: market } = event;
+    const { wallets } = this.account;
 
-      if (isStartOfMonth) {
-        this.#logger.debug(`start of month ${date.toISOString()}`);
+    if (market.name !== 'BTCEUR') return;
+    const date = market.currentDate;
+    const isStartOfMonth = dayjs(date).isSame(dayjs.utc(date).startOf('month'));
 
-        wallets.EUR.deposit(100);
-        this.#amountPerDay = Decimal.div(wallets.EUR.balance, dayjs(date).daysInMonth()).toDecimalPlaces(2).toNumber();
-      }
+    if (isStartOfMonth) {
+      this.logger.debug(`start of month ${date.toISOString()}`);
 
-      if (wallets.EUR.balance > 0)
-        this.orders.create({
-          type: 'market',
-          side: OrderSide.Buy,
-          pair: { base: 'BTC', quote: 'EUR' },
-          owner: account.owner,
-          sellingAmount: Math.min(this.#amountPerDay, wallets.EUR.balance),
-        });
-    });
+      wallets.EUR.deposit(100);
+      this.#amountPerDay = Decimal.div(wallets.EUR.balance, dayjs(date).daysInMonth()).toDecimalPlaces(2).toNumber();
+    }
+
+    if (wallets.EUR.balance > 0)
+      this.orders.create({
+        type: 'market',
+        side: OrderSide.Buy,
+        pair: { base: 'BTC', quote: 'EUR' },
+        owner: this.account.owner,
+        sellingAmount: Math.min(this.#amountPerDay, wallets.EUR.balance),
+      });
   }
 }
