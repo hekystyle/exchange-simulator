@@ -60,21 +60,21 @@ export class StrategyEnhancedDCA {
       this.orders.cancelByOwner(account.owner);
 
       // create market order for remaining funds
-      if (wallets.EUR.balance > 0)
+      if (wallets.get('EUR').balance > 0)
         this.orders.create({
           type: 'market',
           side: OrderSide.Buy,
           owner: account.owner,
           pair: { base: 'BTC', quote: 'EUR' },
-          sellingAmount: wallets.EUR.balance,
+          sellingAmount: wallets.get('EUR').balance,
         });
 
       // add new funds to EUR account
-      wallets.EUR.deposit(100);
+      wallets.get('EUR').deposit(100);
 
       // create limit orders for new funds
       const { currentPrice } = market;
-      const availableFunds = wallets.EUR.balance;
+      const availableFunds = wallets.get('EUR').balance;
 
       limitPrices(currentPrice, availableFunds, sellingAmountPerOrder).forEach(price => {
         this.orders.create({
@@ -83,7 +83,7 @@ export class StrategyEnhancedDCA {
           owner: account.owner,
           pair: { base: 'BTC', quote: 'EUR' },
           limitPrice: price,
-          sellingAmount: Math.min(wallets.EUR.balance, sellingAmountPerOrder),
+          sellingAmount: Math.min(wallets.get('EUR').balance, sellingAmountPerOrder),
         });
       });
     }
@@ -97,13 +97,13 @@ export class StrategyEnhancedDCA {
 
     this.orders.cancelByOwner(this.account.owner);
 
-    if (wallets.EUR.balance > 0)
+    if (wallets.get('EUR').balance > 0)
       this.orders.create({
         type: 'market',
         side: OrderSide.Buy,
         owner: account.owner,
         pair: { base: 'BTC', quote: 'EUR' },
-        sellingAmount: wallets.EUR.balance,
+        sellingAmount: wallets.get('EUR').balance,
       });
   }
 }

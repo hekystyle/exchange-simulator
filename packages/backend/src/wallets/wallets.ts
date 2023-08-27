@@ -1,30 +1,37 @@
+import { Logger } from '@nestjs/common';
 import { Wallet } from './wallet.js';
 
-type WalletsMap = {
-  [Currency in 'EUR' | 'BTC']: Wallet;
-};
+type Currency = string;
+type WalletsMap = Map<Currency, Wallet>;
 
-export class Wallets implements Iterable<Wallet>, WalletsMap {
-  #EUR = new Wallet('EUR');
+export class Wallets implements Iterable<Wallet> {
+  private readonly wallets: WalletsMap = new Map<Currency, Wallet>();
 
-  #BTC = new Wallet('BTC');
-
-  get EUR(): Wallet {
-    return this.#EUR;
-  }
-
-  get BTC(): Wallet {
-    return this.#BTC;
-  }
+  private readonly logger = new Logger(Wallets.name);
 
   [Symbol.iterator]() {
-    return [this.#EUR, this.#BTC].values();
+    return this.wallets.values();
+  }
+
+  get(currency: string): Wallet {
+    let wallet = this.wallets.get(currency);
+
+    if (!wallet) {
+      this.logger.log(`Creating new wallet for ${currency}`);
+      wallet = new Wallet(currency);
+      this.wallets.set(currency, wallet);
+    }
+
+    return wallet;
   }
 
   toJSON() {
-    return {
-      EUR: this.#EUR.toJSON(),
-      BTC: this.#BTC.toJSON(),
-    };
+    return Array.from(this.wallets.values()).reduce(
+      (acc, wallet) => {
+        acc[wallet.currency] = wallet.toJSON();
+        return acc;
+      },
+      {} as Record<Currency, unknown>,
+    );
   }
 }

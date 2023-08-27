@@ -50,19 +50,19 @@ export class StrategyDCA {
     if (isStartOfMonth) {
       this.logger.debug(`start of month ${date.toISOString()}`);
 
-      wallets.EUR.deposit(100);
-      this.#amountPerDay = Decimal.div(wallets.EUR.balance, dayjs(date).daysInMonth())
+      wallets.get('EUR').deposit(100);
+      this.#amountPerDay = Decimal.div(wallets.get('EUR').balance, dayjs(date).daysInMonth())
         .toDecimalPlaces(2)
         .toNumber();
     }
 
-    if (wallets.EUR.balance > 0)
+    if (wallets.get('EUR').balance > 0)
       this.orders.create({
         type: 'market',
         side: OrderSide.Buy,
         pair: { base: 'BTC', quote: 'EUR' },
         owner: this.account.owner,
-        sellingAmount: Math.min(this.#amountPerDay, wallets.EUR.balance),
+        sellingAmount: Math.min(this.#amountPerDay, wallets.get('EUR').balance),
       });
   }
 }
