@@ -23,7 +23,7 @@ it('should execute', async () => {
   const accounts = app.get(Accounts);
 
   await exchange.init({
-    pair: 'BTCEUR',
+    pair: 'BTC-EUR',
     candles: BTCEUR_YEAR_DAILY_CANDLES,
   });
   await exchange.start(undefined);

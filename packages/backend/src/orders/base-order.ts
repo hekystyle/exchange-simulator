@@ -1,10 +1,8 @@
+// eslint-disable-next-line max-classes-per-file
 import { Decimal } from 'decimal.js';
+import { TradingPair } from '../markets/trading-pair.js';
+import { StrictOmit } from '../utils/StrictOmit.js';
 import type { Wallet } from '../wallets/wallet.js';
-
-interface TradingPair<T extends [string, string]> {
-  base: T[0];
-  quote: T[1];
-}
 
 export enum OrderSide {
   Buy = 'buy',
@@ -15,7 +13,7 @@ export interface BaseOrderConfig {
   type: string;
   side: OrderSide.Buy;
   owner: string;
-  pair: TradingPair<['BTC', 'EUR']>;
+  pair: StrictOmit<TradingPair<'BTC', 'EUR'>, 'symbol'>;
   sellingAmount: number;
 }
 

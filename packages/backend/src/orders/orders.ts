@@ -30,7 +30,7 @@ export class Orders implements Iterable<Order> {
   }
 
   create(orderConfig: OrderConfig) {
-    const market = this.markets.get(`${orderConfig.pair.base}${orderConfig.pair.quote}` as const);
+    const market = this.markets.get(`${orderConfig.pair.base}-${orderConfig.pair.quote}` as const);
     const { wallets } = this.accounts.get(orderConfig.owner);
     const buyingWallet = wallets.get(orderConfig.pair.base);
     const sellingWallet = wallets.get(orderConfig.pair.quote);
@@ -71,7 +71,7 @@ export class Orders implements Iterable<Order> {
     this.#orders.forEach(
       order =>
         order.status === 'open' &&
-        market.name === (`${order.config.pair.base}${order.config.pair.quote}` as const) &&
+        market.pair.symbol === (`${order.config.pair.base}-${order.config.pair.quote}` as const) &&
         this.tryFillOrder(order, market.currentPrice),
     );
   }
