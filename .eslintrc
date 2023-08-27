@@ -9,6 +9,7 @@
     "plugin:@typescript-eslint/strict",
     "airbnb-typescript",
     "plugin:react/jsx-runtime",
+    "plugin:@tanstack/query/recommended",
     "plugin:prettier/recommended"
   ],
   "parserOptions": {
