@@ -50,7 +50,8 @@ export class StrategyEnhancedDCA {
     const { account, sellingAmountPerOrder } = this;
     const { wallets } = account;
 
-    if (market.name !== 'BTCEUR') return;
+    if (market.pair.symbol !== 'BTC-EUR') return;
+
     const date = market.currentDate;
     const isStartOfMonth = dayjs(date).isSame(dayjs.utc(date).startOf('month'));
 

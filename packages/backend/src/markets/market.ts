@@ -1,6 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Event } from '../Event.js';
+import { TradingPair } from './trading-pair.js';
 
 export class MarketOpenedEvent extends Event<Market> {
   static ID = 'market.opened' as const;
@@ -19,7 +20,7 @@ export class Market {
 
   constructor(
     private readonly eventEmitter: EventEmitter2,
-    public readonly name: 'BTCEUR',
+    public readonly pair: TradingPair<'BTC', 'EUR'>,
   ) {}
 
   get currentPrice(): number {

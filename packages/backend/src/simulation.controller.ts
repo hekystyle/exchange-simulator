@@ -19,7 +19,7 @@ export class SimulationController {
     this.logger.debug('Initializing simulation');
 
     await this.exchange.init({
-      pair: 'BTCEUR',
+      pair: 'BTC-EUR',
       candles: BTCEUR_YEAR_DAILY_CANDLES,
     });
   }

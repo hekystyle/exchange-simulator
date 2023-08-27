@@ -5,12 +5,13 @@ import dayjs from 'dayjs';
 import { Candle } from './candle.js';
 import { Event } from './Event.js';
 import { Markets } from './markets/markets.js';
+import { TradingPairSymbol } from './markets/trading-pair.js';
 import { Orders } from './orders/orders.js';
 import { wait } from './utils/wait.js';
 
 interface Session {
   candles: Candle[];
-  pair: 'BTCEUR';
+  pair: TradingPairSymbol<'BTC', 'EUR'>;
 }
 
 export class TickEvent extends Event<SimulatedExchange> {
