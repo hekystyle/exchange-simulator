@@ -12,4 +12,8 @@ export class TradingPair<TBase extends string, TQuote extends string> {
   get symbol(): TradingPairSymbol<TBase, TQuote> {
     return `${this.base}-${this.quote}` as const;
   }
+
+  equals(pair: TradingPair<TBase, TQuote>): boolean {
+    return this.base === pair.base && this.quote === pair.quote;
+  }
 }
