@@ -6,6 +6,7 @@ import { Account } from '../accounts/account.js';
 import { Accounts } from '../accounts/accounts.js';
 import { limitPrices } from '../limit-prices.js';
 import { MarketOpenedEvent } from '../markets/market.js';
+import { TradingPair } from '../markets/trading-pair.js';
 import { OrderSide } from '../orders/base-order.js';
 import { Orders } from '../orders/orders.js';
 import { SimulationFinishingEvent } from '../simulated-exchange.js';
@@ -17,6 +18,8 @@ export class StrategyEnhancedDCA {
   private account: Account | undefined;
 
   private sellingAmountPerOrder: number | undefined;
+
+  private pair = new TradingPair('BTC', 'EUR');
 
   constructor(
     @Inject(EventEmitter2)
@@ -50,7 +53,9 @@ export class StrategyEnhancedDCA {
     const { account, sellingAmountPerOrder } = this;
     const { wallets } = account;
 
-    if (market.pair.symbol !== 'BTC-EUR') return;
+    if (!market.pair.equals(this.pair)) return;
+
+    const sellingWallet = wallets.get(this.pair.quote);
 
     const date = market.currentDate;
     const isStartOfMonth = dayjs(date).isSame(dayjs.utc(date).startOf('month'));
@@ -61,30 +66,30 @@ export class StrategyEnhancedDCA {
       this.orders.cancelByOwner(account.owner);
 
       // create market order for remaining funds
-      if (wallets.get('EUR').balance > 0)
+      if (sellingWallet.balance > 0)
         this.orders.create({
           type: 'market',
           side: OrderSide.Buy,
           owner: account.owner,
-          pair: { base: 'BTC', quote: 'EUR' },
-          sellingAmount: wallets.get('EUR').balance,
+          pair: this.pair,
+          sellingAmount: sellingWallet.balance,
         });
 
       // add new funds to EUR account
-      wallets.get('EUR').deposit(100);
+      sellingWallet.deposit(100);
 
       // create limit orders for new funds
       const { currentPrice } = market;
-      const availableFunds = wallets.get('EUR').balance;
+      const availableFunds = sellingWallet.balance;
 
       limitPrices(currentPrice, availableFunds, sellingAmountPerOrder).forEach(price => {
         this.orders.create({
           type: 'limit',
           side: OrderSide.Buy,
           owner: account.owner,
-          pair: { base: 'BTC', quote: 'EUR' },
+          pair: this.pair,
           limitPrice: price,
-          sellingAmount: Math.min(wallets.get('EUR').balance, sellingAmountPerOrder),
+          sellingAmount: Math.min(sellingWallet.balance, sellingAmountPerOrder),
         });
       });
     }
@@ -96,15 +101,17 @@ export class StrategyEnhancedDCA {
     const { account } = this;
     const { wallets } = account;
 
+    const sellingWallet = wallets.get(this.pair.quote);
+
     this.orders.cancelByOwner(this.account.owner);
 
-    if (wallets.get('EUR').balance > 0)
+    if (sellingWallet.balance > 0)
       this.orders.create({
         type: 'market',
         side: OrderSide.Buy,
         owner: account.owner,
-        pair: { base: 'BTC', quote: 'EUR' },
-        sellingAmount: wallets.get('EUR').balance,
+        pair: this.pair,
+        sellingAmount: sellingWallet.balance,
       });
   }
 }

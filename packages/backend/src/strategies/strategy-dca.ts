@@ -6,6 +6,7 @@ import { Decimal } from 'decimal.js';
 import { Account } from '../accounts/account.js';
 import { Accounts } from '../accounts/accounts.js';
 import { MarketOpenedEvent } from '../markets/market.js';
+import { TradingPair } from '../markets/trading-pair.js';
 import { OrderSide } from '../orders/base-order.js';
 import { Orders } from '../orders/orders.js';
 
@@ -14,6 +15,8 @@ export class StrategyDCA {
   private readonly logger = new Logger(StrategyDCA.name);
 
   private account: Account | undefined;
+
+  private pair = new TradingPair('BTC', 'EUR');
 
   #amountPerDay = 0;
 
@@ -43,7 +46,9 @@ export class StrategyDCA {
     const { sender: market } = event;
     const { wallets } = this.account;
 
-    if (market.pair.symbol !== 'BTC-EUR') return;
+    if (!market.pair.equals(this.pair)) return;
+
+    const sellingWallet = wallets.get(this.pair.quote);
 
     const date = market.currentDate;
     const isStartOfMonth = dayjs(date).isSame(dayjs.utc(date).startOf('month'));
@@ -51,19 +56,19 @@ export class StrategyDCA {
     if (isStartOfMonth) {
       this.logger.debug(`start of month ${date.toISOString()}`);
 
-      wallets.get('EUR').deposit(100);
-      this.#amountPerDay = Decimal.div(wallets.get('EUR').balance, dayjs(date).daysInMonth())
+      sellingWallet.deposit(100);
+      this.#amountPerDay = Decimal.div(sellingWallet.balance, dayjs(date).daysInMonth())
         .toDecimalPlaces(2)
         .toNumber();
     }
 
-    if (wallets.get('EUR').balance > 0)
+    if (sellingWallet.balance > 0)
       this.orders.create({
         type: 'market',
         side: OrderSide.Buy,
-        pair: { base: 'BTC', quote: 'EUR' },
+        pair: market.pair,
         owner: this.account.owner,
-        sellingAmount: Math.min(this.#amountPerDay, wallets.get('EUR').balance),
+        sellingAmount: Math.min(this.#amountPerDay, sellingWallet.balance),
       });
   }
 }
