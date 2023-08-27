@@ -51,7 +51,9 @@ export class StrategyDCA {
       this.logger.debug(`start of month ${date.toISOString()}`);
 
       wallets.EUR.deposit(100);
-      this.#amountPerDay = Decimal.div(wallets.EUR.balance, dayjs(date).daysInMonth()).toDecimalPlaces(2).toNumber();
+      this.#amountPerDay = Decimal.div(wallets.EUR.balance, dayjs(date).daysInMonth())
+        .toDecimalPlaces(2)
+        .toNumber();
     }
 
     if (wallets.EUR.balance > 0)

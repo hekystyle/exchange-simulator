@@ -22,9 +22,13 @@ const getSerieName = (meta: Metadata): string => {
 };
 
 export const StatsChart: FC = () => {
-  const { data, refetch } = useQuery<Serie[]>(['statistics'], async ({ signal }) => await fetchStats(signal), {
-    suspense: true,
-  });
+  const { data, refetch } = useQuery<Serie[]>(
+    ['statistics'],
+    async ({ signal }) => await fetchStats(signal),
+    {
+      suspense: true,
+    },
+  );
 
   const handleRefreshButtonClick = () => {
     refetch().catch(error => console.error(error));
