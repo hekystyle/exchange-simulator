@@ -2,7 +2,6 @@ import { Body, Controller, Logger, MessageEvent, Post, Sse } from '@nestjs/commo
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Observable, filter, fromEvent, map, merge } from 'rxjs';
 import { z } from 'zod';
-import { BTCEUR_YEAR_DAILY_CANDLES } from './data/BTCEUR.js';
 import { SimulatedExchange, SimulationFinishedEvent, TickEvent } from './simulated-exchange.js';
 
 @Controller('/simulation')
@@ -20,7 +19,7 @@ export class SimulationController {
 
     await this.exchange.init({
       pair: 'BTC-EUR',
-      candles: BTCEUR_YEAR_DAILY_CANDLES,
+      interval: 3600,
     });
   }
 

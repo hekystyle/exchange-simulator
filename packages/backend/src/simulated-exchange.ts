@@ -1,17 +1,22 @@
 /* eslint-disable max-classes-per-file */
+import assert from 'assert';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Candle, PrismaClient } from '@prisma/client';
 import dayjs from 'dayjs';
-import { Candle } from './candle.js';
 import { Event } from './Event.js';
 import { Markets } from './markets/markets.js';
 import { TradingPairSymbol } from './markets/trading-pair.js';
 import { Orders } from './orders/orders.js';
 import { wait } from './utils/wait.js';
 
-interface Session {
-  candles: Candle[];
+interface InitSessionConfig {
   pair: TradingPairSymbol<'BTC', 'EUR'>;
+  interval: number;
+}
+
+interface Session extends InitSessionConfig {
+  candles: Candle[];
 }
 
 export class TickEvent extends Event<SimulatedExchange> {
@@ -48,15 +53,28 @@ export class SimulatedExchange {
     private readonly orders: Orders,
     @Inject(EventEmitter2)
     private readonly eventEmitter: EventEmitter2,
+    @Inject(PrismaClient)
+    private readonly database: PrismaClient,
   ) {}
 
-  async init(session: Session) {
-    if (this.session) throw new Error('Simulation already initialized');
-    this.session = session;
+  async init(config: InitSessionConfig) {
+    assert(!this.session, 'Simulation already initialized');
+
+    // TODO: implement cursor
+    const candles = await this.database.candle.findMany({
+      where: {
+        symbol: config.pair,
+        interval: config.interval,
+      },
+    });
+
+    assert(candles.length, 'No candles found');
+
+    this.session = { ...config, candles };
   }
 
   async start(slowDownInMs: number | undefined) {
-    if (!this.session) throw new Error('Simulation must be started first');
+    assert(this.session, 'Simulation must be started first');
     if (this.abortController) throw new Error('Simulation already started');
 
     this.abortController = new AbortController();
@@ -66,7 +84,7 @@ export class SimulatedExchange {
     let candle = candles.shift();
 
     while (candle) {
-      const date = dayjs(candle.date);
+      const date = dayjs(candle.timestamp);
 
       this.logger.debug(`Simulating ${date.format('YYYY-MM-DD')}`);
 
@@ -100,9 +118,8 @@ export class SimulatedExchange {
   }
 
   stop() {
-    if (!this.session) {
-      throw new Error('Simulation not started');
-    }
+    assert(this.session, 'Simulation not started');
+
     this.abortController?.abort('Simulation stopped by user');
     this.abortController = undefined;
   }

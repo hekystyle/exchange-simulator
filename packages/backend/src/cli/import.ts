@@ -9,7 +9,13 @@ async function bootstrap() {
 
   await app.init();
 
-  await app.get(CandlesImporter).import(process.stdin);
+  await app.get(CandlesImporter).import({
+    input: process.stdin,
+    // TODO: take  from params
+    symbol: 'BTC-EUR',
+    interval: 3600,
+    separator: ';',
+  });
 }
 // eslint-disable-next-line no-console
 bootstrap().catch(console.error);

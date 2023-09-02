@@ -3,7 +3,7 @@ import { createInterface } from 'readline';
 import { Readable, Transform, Writable } from 'stream';
 import { finished } from 'stream/promises';
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { Candle, PrismaClient } from '@prisma/client';
 import dayjs from 'dayjs';
 import { z } from 'zod';
 
@@ -15,7 +15,15 @@ const candle = z.object({
   close: z.coerce.number(),
 });
 
-type Candle = z.infer<typeof candle>;
+type CandleDto = z.infer<typeof candle>;
+
+interface InputOption {
+  input: Readable;
+}
+
+interface SeparatorOption {
+  separator: string;
+}
 
 @Injectable()
 export class CandlesImporter {
@@ -26,30 +34,30 @@ export class CandlesImporter {
     private readonly database: PrismaClient,
   ) {}
 
-  async import(readable: Readable) {
+  async import(options: InputOption & Pick<Candle, 'interval' | 'symbol'> & SeparatorOption) {
     this.logger.debug('Importing candles');
 
-    const stream = this.readline(readable)
-      .pipe(this.parseRow(','))
+    const stream = this.readline(options.input)
+      .pipe(this.parseRow(options))
       .pipe(this.filterExisting())
-      .pipe(this.save());
+      .pipe(this.save(options));
 
     await finished(stream, { error: true });
 
     this.logger.debug('Import finished');
   }
 
-  private readline(readable: Readable): Readable {
+  private readline(input: Readable): Readable {
     this.logger.debug('Creating readline stream');
 
     return Readable.from(
       createInterface({
-        input: readable,
+        input,
       }),
     );
   }
 
-  private parseRow(separator: string): Transform {
+  private parseRow({ separator }: SeparatorOption): Transform {
     this.logger.debug('Creating parseRow stream');
 
     return new Transform({
@@ -75,7 +83,7 @@ export class CandlesImporter {
 
     return new Transform({
       objectMode: true,
-      transform: (chunk: Candle, _, next) => {
+      transform: (chunk: CandleDto, _, next) => {
         const { timestamp } = chunk;
 
         this.database.candle
@@ -96,20 +104,20 @@ export class CandlesImporter {
     });
   }
 
-  private save(): Writable {
+  private save({ interval, symbol }: Pick<Candle, 'interval' | 'symbol'>): Writable {
     this.logger.debug('Creating save stream');
 
     return new Writable({
       objectMode: true,
-      write: (chunk: Candle, _, next) => {
+      write: (chunk: CandleDto, _, next) => {
         this.logger.debug(`Saving candle ${chunk.timestamp.toISOString()}`);
 
         this.database.candle
           .create({
             data: {
               ...chunk,
-              interval: 3600,
-              symbol: 'BTC-EUR',
+              interval,
+              symbol,
             },
           })
           .then(() => next())
