@@ -13,7 +13,7 @@ export interface BaseOrderConfig {
   type: string;
   side: OrderSide.Buy;
   owner: string;
-  pair: StrictOmit<TradingPair<'BTC', 'EUR'>, 'symbol'>;
+  pair: StrictOmit<TradingPair<'BTC', 'EUR'>, 'symbol' | 'equals'>;
   sellingAmount: number;
 }
 

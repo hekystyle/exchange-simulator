@@ -50,7 +50,7 @@ export class StatisticsCollector {
     };
 
     this.eventEmitter.on(TickEvent.ID, (event: TickEvent) =>
-      collectStatisticsForTimePoint(event.candle.date),
+      collectStatisticsForTimePoint(event.candle.timestamp),
     );
     this.eventEmitter.on(SimulationFinishedEvent.ID, () => collectStatisticsForTimePoint(new Date()));
     return this;
