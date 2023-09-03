@@ -1,4 +1,15 @@
-import { Body, Controller, Logger, MessageEvent, Post, Sse } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  DefaultValuePipe,
+  Logger,
+  MessageEvent,
+  ParseEnumPipe,
+  ParseIntPipe,
+  Post,
+  Query,
+  Sse,
+} from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Observable, filter, fromEvent, map, merge } from 'rxjs';
 import { z } from 'zod';
@@ -14,12 +25,17 @@ export class SimulationController {
   ) {}
 
   @Post('/init')
-  async init() {
+  async init(
+    @Query('pair', new DefaultValuePipe('BTC_EUR'), new ParseEnumPipe(['BTC-EUR']))
+    pair: 'BTC-EUR',
+    @Query('interval', new DefaultValuePipe(3600), ParseIntPipe)
+    interval: number,
+  ) {
     this.logger.debug('Initializing simulation');
 
     await this.exchange.init({
-      pair: 'BTC-EUR',
-      interval: 3600,
+      pair,
+      interval,
     });
   }
 
