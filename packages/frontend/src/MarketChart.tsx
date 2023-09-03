@@ -5,7 +5,7 @@ import { Chart } from './Chart.jsx';
 import { getBaseApiUrl } from './fetch.js';
 
 const Candle = z.object({
-  date: z
+  timestamp: z
     .string()
     .datetime()
     .transform(value => new Date(value)),
@@ -26,7 +26,7 @@ export const MarketChart = () => {
       setData(prevData => [
         ...prevData,
         {
-          x: candle.date.getTime(),
+          x: candle.timestamp.getTime(),
           open: candle.open,
           high: candle.high,
           low: candle.low,
