@@ -117,6 +117,7 @@ __metadata:
     "@types/node": 18.17.6
     dayjs: 1.11.9
     decimal.js: 10.4.3
+    eventemitter2: 6.4.9
     json-stable-stringify: 1.0.2
     mongodb-memory-server: 8.15.1
     prisma: 5.2.0
