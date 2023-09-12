@@ -27,6 +27,7 @@
     "@prisma/client": "5.2.0",
     "dayjs": "1.11.9",
     "decimal.js": "10.4.3",
+    "eventemitter2": "6.4.9",
     "json-stable-stringify": "1.0.2",
     "prisma": "5.2.0",
     "reflect-metadata": "0.1.13",
