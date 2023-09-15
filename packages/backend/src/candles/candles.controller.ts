@@ -1,4 +1,4 @@
-import { Controller, DefaultValuePipe, Get, ParseEnumPipe, ParseIntPipe, Query } from '@nestjs/common';
+import { BadRequestException, Controller, Get, ParseEnumPipe, ParseIntPipe, Query } from '@nestjs/common';
 import { PrismaClient, Prisma } from '@prisma/client';
 
 @Controller('candles')
@@ -20,8 +20,10 @@ export class CandlesController {
 
   @Get('range')
   async range(
-    @Query('symbol', new DefaultValuePipe('BTC_EUR')) symbol: string,
-    @Query('interval', new DefaultValuePipe(3600), ParseIntPipe) interval: number,
+    @Query('symbol')
+    symbol: string,
+    @Query('interval', ParseIntPipe)
+    interval: number,
   ) {
     const [first, last] = await Promise.all([
       this.database.candle.findFirst({
@@ -34,9 +36,11 @@ export class CandlesController {
       }),
     ]);
 
+    if (!first || !last) throw new BadRequestException('No candles found');
+
     return {
-      first: first?.timestamp,
-      last: last?.timestamp,
+      first: first.timestamp,
+      last: last.timestamp,
     };
   }
 }
