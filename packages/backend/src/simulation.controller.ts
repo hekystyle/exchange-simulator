@@ -11,7 +11,7 @@ import {
   Sse,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { Observable, filter, fromEvent, map, merge } from 'rxjs';
+import rx from 'rxjs';
 import { z } from 'zod';
 import { SimulatedExchange, SimulationFinishedEvent, TickEvent } from './simulated-exchange.js';
 
@@ -53,17 +53,17 @@ export class SimulationController {
   }
 
   @Sse('/sse')
-  onFinished(): Observable<MessageEvent> {
-    const tick = fromEvent(this.eventEmitter, TickEvent.ID).pipe(
-      filter((event): event is TickEvent => event instanceof TickEvent),
-      map((event: TickEvent): MessageEvent => ({ data: event.candle, type: TickEvent.ID })),
+  onFinished(): rx.Observable<MessageEvent> {
+    const tick = rx.fromEvent(this.eventEmitter, TickEvent.ID).pipe(
+      rx.filter((event): event is TickEvent => event instanceof TickEvent),
+      rx.map((event: TickEvent): MessageEvent => ({ data: event.candle, type: TickEvent.ID })),
     );
 
-    const finished = fromEvent(this.eventEmitter, SimulationFinishedEvent.ID).pipe(
-      filter((event): event is SimulationFinishedEvent => event instanceof SimulationFinishedEvent),
-      map((): MessageEvent => ({ data: {}, type: SimulationFinishedEvent.ID })),
+    const finished = rx.fromEvent(this.eventEmitter, SimulationFinishedEvent.ID).pipe(
+      rx.filter((event): event is SimulationFinishedEvent => event instanceof SimulationFinishedEvent),
+      rx.map((): MessageEvent => ({ data: {}, type: SimulationFinishedEvent.ID })),
     );
 
-    return merge(tick, finished);
+    return rx.merge(tick, finished);
   }
 }
