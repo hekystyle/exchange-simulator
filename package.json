@@ -16,6 +16,7 @@
   ],
   "scripts": {
     "build": "lerna run build",
+    "start": "lerna run start",
     "check-types": "lerna run check-types",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
