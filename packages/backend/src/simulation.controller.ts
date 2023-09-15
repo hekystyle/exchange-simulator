@@ -26,7 +26,7 @@ export class SimulationController {
 
   @Post('/init')
   async init(
-    @Query('pair', new DefaultValuePipe('BTC_EUR'), new ParseEnumPipe(['BTC-EUR']))
+    @Query('pair', new DefaultValuePipe('BTC-EUR'), new ParseEnumPipe(['BTC-EUR']))
     pair: 'BTC-EUR',
     @Query('interval', new DefaultValuePipe(3600), ParseIntPipe)
     interval: number,
