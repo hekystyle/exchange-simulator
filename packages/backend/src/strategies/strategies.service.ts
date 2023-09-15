@@ -31,7 +31,7 @@ export class StrategiesService implements OnApplicationBootstrap {
     return rx.from(this.strategiesMap.entries()).pipe(rx.map(([id, strategy]) => ({ id, strategy })));
   }
 
-  findById(id: string): rx.Observable<IStrategy | undefined> {
-    return rx.of(this.strategiesMap.get(id));
+  async findById(id: string): Promise<IStrategy | undefined> {
+    return this.strategiesMap.get(id);
   }
 }

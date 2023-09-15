@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, Get, Post, Query } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Put, Query } from '@nestjs/common';
 import rx from 'rxjs';
 import { StrategiesService } from './strategies.service.js';
 
@@ -7,30 +7,31 @@ export class StrategiesController {
   constructor(private strategies: StrategiesService) {}
 
   @Get()
-  async find() {
+  find(): rx.Observable<Array<{ id: string; enabled: boolean }>> {
     return this.strategies.find().pipe(
       rx.map(({ id, strategy }) => ({
         id,
         enabled: strategy.enabled,
       })),
+      rx.toArray(),
     );
   }
 
-  @Post('enable')
-  enable(@Query('id') id: string): rx.Observable<never> {
-    return this.strategies.findById(id).pipe(
-      rx.throwIfEmpty(() => new BadRequestException(`Strategy with id "${id}" not found`)),
-      rx.map(s => s?.enable()),
-      rx.ignoreElements(),
-    );
+  @Put('enable')
+  async enable(@Query('id') id: string): Promise<void> {
+    const strategy = await this.strategies.findById(id);
+
+    if (!strategy) throw new BadRequestException(`Strategy not found by ID: ${id}`);
+
+    strategy.enable();
   }
 
-  @Post('disable')
-  disable(@Query('id') id: string): rx.Observable<never> {
-    return this.strategies.findById(id).pipe(
-      rx.throwIfEmpty(() => new BadRequestException(`Strategy with id "${id}" not found`)),
-      rx.map(s => s?.disable()),
-      rx.ignoreElements(),
-    );
+  @Put('disable')
+  async disable(@Query('id') id: string): Promise<void> {
+    const strategy = await this.strategies.findById(id);
+
+    if (!strategy) throw new BadRequestException(`Strategy not found by ID: ${id}`);
+
+    strategy.disable();
   }
 }
