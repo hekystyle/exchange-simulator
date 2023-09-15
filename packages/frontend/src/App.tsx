@@ -1,8 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
+import { Tabs } from 'antd';
 import { FC, Suspense, useState } from 'react';
 import { getBaseApiUrl } from './fetch.js';
 import { MarketChart } from './MarketChart.jsx';
 import { StatsChart } from './StatsChart.jsx';
+import { Strategies } from './Strategies.jsx';
 
 const initSimulation = async (): Promise<void> => {
   const url = new URL('/simulation/init', getBaseApiUrl());
@@ -44,6 +46,13 @@ export const App: FC = () => {
 
   return (
     <>
+      <Tabs>
+        <Tabs.TabPane tab="Strategies" key="market">
+          <Suspense fallback="Loading...">
+            <Strategies />
+          </Suspense>
+        </Tabs.TabPane>
+      </Tabs>
       <button type="button" onClick={() => mutateInitSimulation()} disabled={isInitializingSimulation}>
         Init simulation
       </button>

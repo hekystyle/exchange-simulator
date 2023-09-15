@@ -31,7 +31,14 @@
           "caseInsensitive": true
         },
         "groups": ["builtin", "external", "internal", "unknown", "parent", "sibling", "index", "object", "type"],
-        "newlines-between": "never"
+        "newlines-between": "never",
+        "pathGroups": [
+          {
+            "pattern": "@app/**",
+            "group": "internal"
+          }
+        ],
+        "pathGroupsExcludedImportTypes": ["builtin"]
       }
     ],
     "n/no-missing-import": "off", // handled by TypeScript

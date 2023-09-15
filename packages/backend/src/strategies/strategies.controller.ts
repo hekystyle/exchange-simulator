@@ -1,5 +1,6 @@
 import { BadRequestException, Controller, Get, Put, Query } from '@nestjs/common';
 import rx from 'rxjs';
+import { Strategy } from '@app/common';
 import { StrategiesService } from './strategies.service.js';
 
 @Controller('strategies')
@@ -7,7 +8,7 @@ export class StrategiesController {
   constructor(private strategies: StrategiesService) {}
 
   @Get()
-  find(): rx.Observable<Array<{ id: string; enabled: boolean }>> {
+  find(): rx.Observable<Strategy[]> {
     return this.strategies.find().pipe(
       rx.map(({ id, strategy }) => ({
         id,

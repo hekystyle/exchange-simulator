@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 type X = number;
 type Y = number;
 
@@ -22,3 +24,10 @@ export interface Serie {
   meta: Metadata;
   data: CompactPoint[];
 }
+
+export const strategySchema = z.object({
+  id: z.string().nonempty(),
+  enabled: z.boolean(),
+});
+
+export type Strategy = z.infer<typeof strategySchema>;

@@ -15,12 +15,16 @@
     "url": "git+https://github.com/hekystyle/exchange-simulator.git"
   },
   "scripts": {
-    "build": "tsc -b ./tsconfig.json"
+    "build": "tsc -b ./tsconfig.json",
+    "dev": "tsc -b ./tsconfig.json --watch"
   },
   "bugs": {
     "url": "https://github.com/hekystyle/exchange-simulator/issues"
   },
   "devDependencies": {
     "typescript": "5.1.6"
+  },
+  "dependencies": {
+    "zod": "3.22.2"
   }
 }
