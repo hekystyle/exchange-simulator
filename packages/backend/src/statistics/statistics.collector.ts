@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { OnEvent } from '@nestjs/event-emitter';
 import { Decimal } from 'decimal.js';
 import stableJsonStringify from 'json-stable-stringify';
 import { Metadata, Serie, compactPoint } from '@app/common';
@@ -12,52 +12,50 @@ export class StatisticsCollector {
   #series = new Map<string, Serie>();
 
   constructor(
-    @Inject(EventEmitter2)
-    private readonly eventEmitter: EventEmitter2,
     @Inject(Orders)
     private readonly orders: Orders,
     @Inject(Accounts)
     private readonly accounts: Accounts,
-  ) {
-    this.setup();
+  ) {}
+
+  @OnEvent(TickEvent.ID)
+  handleSimulationFinishedEvent(event: TickEvent): void {
+    this.collectStatisticsForTimePoint(event.candle.timestamp);
   }
 
-  setup(): this {
-    const collectStatisticsForTimePoint = (date: Date) => {
-      Array.from(this.accounts).forEach(({ wallets, owner }) => {
-        Array.from(wallets).forEach(wallet => {
-          const { currency, balance } = wallet;
-          this.#getOrCreateSerie({ owner, unit: currency, source: 'wallet' }).data.push(
-            compactPoint({
-              x: date.getTime(),
-              y: balance,
-            }),
-          );
-
-          const reservedBalanceInOpenedOrders = Array.from(this.orders)
-            .filter(order => order.sellingWallet === wallet && order.status === 'open')
-            .reduce((acc, order) => acc.plus(order.config.sellingAmount), new Decimal(0))
-            .toNumber();
-
-          this.#getOrCreateSerie({ owner, unit: currency, source: 'orders' }).data.push(
-            compactPoint({
-              x: date.getTime(),
-              y: reservedBalanceInOpenedOrders,
-            }),
-          );
-        });
-      });
-    };
-
-    this.eventEmitter.on(TickEvent.ID, (event: TickEvent) =>
-      collectStatisticsForTimePoint(event.candle.timestamp),
-    );
-    this.eventEmitter.on(SimulationFinishedEvent.ID, () => collectStatisticsForTimePoint(new Date()));
-    return this;
+  @OnEvent(SimulationFinishedEvent.ID)
+  handleTickEvent(): void {
+    this.collectStatisticsForTimePoint(new Date());
   }
 
   getSeries(): Serie[] {
     return Array.from(this.#series.values());
+  }
+
+  private collectStatisticsForTimePoint(date: Date) {
+    Array.from(this.accounts).forEach(({ wallets, owner }) => {
+      Array.from(wallets).forEach(wallet => {
+        const { currency, balance } = wallet;
+        this.#getOrCreateSerie({ owner, unit: currency, source: 'wallet' }).data.push(
+          compactPoint({
+            x: date.getTime(),
+            y: balance,
+          }),
+        );
+
+        const reservedBalanceInOpenedOrders = Array.from(this.orders)
+          .filter(order => order.sellingWallet === wallet && order.status === 'open')
+          .reduce((acc, order) => acc.plus(order.config.sellingAmount), new Decimal(0))
+          .toNumber();
+
+        this.#getOrCreateSerie({ owner, unit: currency, source: 'orders' }).data.push(
+          compactPoint({
+            x: date.getTime(),
+            y: reservedBalanceInOpenedOrders,
+          }),
+        );
+      });
+    });
   }
 
   #getOrCreateSerie(meta: Metadata): Serie {
