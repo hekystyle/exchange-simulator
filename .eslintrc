@@ -4,6 +4,7 @@
     "eslint:recommended",
     "plugin:n/recommended",
     "airbnb",
+    "airbnb/hooks",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "plugin:@typescript-eslint/strict",
