@@ -23,6 +23,8 @@
     "browser": false
   },
   "rules": {
+    // handled by TypeScript
+    "import/extensions": "off",
     "import/prefer-default-export": "off",
     "import/order": [
       "error",
