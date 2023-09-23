@@ -8,14 +8,16 @@ import { Event } from './Event.js';
 import { Markets } from './markets/markets.js';
 import { TradingPairSymbol } from './markets/trading-pair.js';
 import { Orders } from './orders/orders.js';
+import { Range } from './Range.js';
 import { wait } from './utils/wait.js';
 
 interface InitSessionConfig {
-  pair: TradingPairSymbol<'BTC', 'EUR'>;
+  symbol: TradingPairSymbol<string, string>;
   interval: number;
+  range?: Range<Date> | undefined;
 }
 
-interface Session extends InitSessionConfig {
+interface Session extends Omit<InitSessionConfig, 'range'> {
   candles: Candle[];
 }
 
@@ -57,13 +59,17 @@ export class SimulatedExchange {
     private readonly database: PrismaClient,
   ) {}
 
-  async init(config: InitSessionConfig) {
+  get isConfigured(): boolean {
+    return !!this.session;
+  }
+
+  async configure(config: InitSessionConfig) {
     assert(!this.session, 'Simulation already initialized');
 
     // TODO: implement cursor
     const candles = await this.database.candle.findMany({
       where: {
-        symbol: config.pair,
+        symbol: config.symbol,
         interval: config.interval,
       },
     });
@@ -78,7 +84,7 @@ export class SimulatedExchange {
     if (this.abortController) throw new Error('Simulation already started');
 
     this.abortController = new AbortController();
-    const { candles, pair } = this.session;
+    const { candles, symbol: pair } = this.session;
     const market = this.markets.get(pair);
 
     let candle = candles.shift();

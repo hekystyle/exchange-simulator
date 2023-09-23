@@ -31,3 +31,8 @@ export const strategySchema = z.object({
 });
 
 export type Strategy = z.infer<typeof strategySchema>;
+
+export interface Range<T> {
+  from: T;
+  to: T;
+}

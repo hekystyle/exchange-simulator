@@ -31,9 +31,10 @@ it('should execute', async () => {
     interval: 3600,
   });
 
-  await exchange.init({
-    pair: 'BTC-EUR',
+  await exchange.configure({
+    symbol: 'BTC-EUR',
     interval: 3600,
+    range: undefined,
   });
 
   await exchange.start(undefined);

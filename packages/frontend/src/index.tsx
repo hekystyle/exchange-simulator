@@ -1,6 +1,8 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { StrictMode } from 'react';
+import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { notification } from 'antd';
+import React, { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter, Router } from 'react-router-dom';
 import { App } from './App.jsx';
 
 const element = document.getElementById('root');
@@ -15,12 +17,25 @@ const queryClient = new QueryClient({
       cacheTime: 0,
     },
   },
+  queryCache: new QueryCache({
+    onError: (error, query) => {
+      const { errorMessage } = query.meta ?? {};
+      if (typeof errorMessage === 'string' || React.isValidElement(errorMessage)) {
+        notification.error({
+          message: errorMessage,
+          description: error instanceof Error ? error.message : undefined,
+        });
+      }
+    },
+  }),
 });
 
 root.render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <App />
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </QueryClientProvider>
   </StrictMode>,
 );

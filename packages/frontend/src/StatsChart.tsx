@@ -39,7 +39,7 @@ export const StatsChart: FC = () => {
       refetch().catch(error => console.error(error));
     });
     return () => eventSource.close();
-  }, []);
+  }, [refetch]);
 
   return (
     <>

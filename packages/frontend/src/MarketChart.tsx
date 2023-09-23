@@ -22,7 +22,12 @@ export const MarketChart = () => {
     const eventSource = new EventSource(new URL('/simulation/sse', getBaseApiUrl()));
     eventSource.onerror = console.error;
     eventSource.addEventListener('simulation.tick', event => {
-      const candle = Candle.parse(JSON.parse(z.string().parse(event.data)));
+      const candle = z
+        .string()
+        .transform(json => JSON.parse(json) as unknown)
+        .pipe(Candle)
+        .parse(event.data);
+
       setData(prevData => [
         ...prevData,
         {

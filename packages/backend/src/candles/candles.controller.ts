@@ -1,5 +1,6 @@
 import { BadRequestException, Controller, Get, ParseEnumPipe, ParseIntPipe, Query } from '@nestjs/common';
 import { PrismaClient, Prisma } from '@prisma/client';
+import { Range } from '../Range.js';
 
 @Controller('candles')
 export class CandlesController {
@@ -24,7 +25,7 @@ export class CandlesController {
     symbol: string,
     @Query('interval', ParseIntPipe)
     interval: number,
-  ) {
+  ): Promise<Range<Date>> {
     const [first, last] = await Promise.all([
       this.database.candle.findFirst({
         where: { symbol, interval },
@@ -39,8 +40,8 @@ export class CandlesController {
     if (!first || !last) throw new BadRequestException('No candles found');
 
     return {
-      first: first.timestamp,
-      last: last.timestamp,
+      from: first.timestamp,
+      to: last.timestamp,
     };
   }
 }

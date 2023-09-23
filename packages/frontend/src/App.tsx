@@ -1,72 +1,72 @@
 import { useMutation } from '@tanstack/react-query';
-import { Tabs } from 'antd';
+import { Button, Form, InputNumber, Space, Tabs } from 'antd';
 import { FC, Suspense, useState } from 'react';
-import { getBaseApiUrl } from './fetch.js';
+import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom';
+import { SimulationConfiguration } from './Configuration.jsx';
 import { MarketChart } from './MarketChart.jsx';
+import * as SimulationApiClient from './simulation-api-client.js';
 import { StatsChart } from './StatsChart.jsx';
-import { Strategies } from './Strategies.jsx';
 
-const initSimulation = async (): Promise<void> => {
-  const url = new URL('/simulation/init', getBaseApiUrl());
-  const response = await fetch(url, { method: 'POST' });
-  if (!response.ok) throw new Error(`Failed to init simulation : ${response.statusText}`);
-};
-
-const startSimulation = async (payload: { speed: number }): Promise<void> => {
-  const url = new URL('/simulation/start', getBaseApiUrl());
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-  if (!response.ok) throw new Error(`Failed to start simulation : ${response.statusText}`);
-};
-
-const stopSimulation = async (): Promise<void> => {
-  const url = new URL(`/simulation/stop`, getBaseApiUrl());
-  const response = await fetch(url, { method: 'POST' });
-  if (!response.ok) throw new Error(`Failed to stop simulation : ${response.statusText}`);
-};
-
-export const App: FC = () => {
+export const SimulationControlPanel = () => {
   const [speed, setSpeed] = useState(50);
 
   const { mutate: mutateStartSimulation, isLoading: isStartingSimulation } = useMutation({
-    mutationFn: startSimulation,
-  });
-
-  const { mutate: mutateInitSimulation, isLoading: isInitializingSimulation } = useMutation({
-    mutationFn: initSimulation,
-    onSuccess: () => mutateStartSimulation({ speed }),
+    mutationFn: SimulationApiClient.startSimulation,
   });
 
   const { mutate: mutateStopSimulation, isLoading: isStoppingSimulation } = useMutation({
-    mutationFn: stopSimulation,
+    mutationFn: SimulationApiClient.stopSimulation,
   });
 
   return (
     <>
-      <Tabs>
-        <Tabs.TabPane tab="Strategies" key="market">
-          <Suspense fallback="Loading...">
-            <Strategies />
-          </Suspense>
-        </Tabs.TabPane>
-      </Tabs>
-      <button type="button" onClick={() => mutateInitSimulation()} disabled={isInitializingSimulation}>
-        Init simulation
-      </button>
-      <button type="button" onClick={() => mutateStartSimulation({ speed })} disabled={isStartingSimulation}>
-        Start simulation
-      </button>
-      <input type="number" value={speed} onChange={e => setSpeed(parseInt(e.target.value, 10))} />
-      <button type="button" onClick={() => mutateStopSimulation()} disabled={isStoppingSimulation}>
-        Stop simulation
-      </button>
+      <Form.Item help="Speed of simulation in milliseconds" label="Speed">
+        <InputNumber value={speed} onChange={value => value && setSpeed(value)} />
+      </Form.Item>
+      <Space size={8}>
+        <Button disabled={isStartingSimulation} onClick={() => mutateStartSimulation({ speed })}>
+          Start simulation
+        </Button>
+        <Button disabled={isStoppingSimulation} onClick={() => mutateStopSimulation()}>
+          Stop simulation
+        </Button>
+      </Space>
       <MarketChart />
       <Suspense fallback="Loading...">
         <StatsChart />
       </Suspense>
     </>
+  );
+};
+
+export const AppTabs = () => {
+  const { tab } = useParams();
+  const navigate = useNavigate();
+  return (
+    <Tabs
+      activeKey={tab ?? 'configuration'}
+      items={[
+        {
+          key: 'configuration',
+          label: 'Configuration',
+          children: <SimulationConfiguration />,
+        },
+        {
+          key: 'control-panel',
+          label: 'Control panel',
+          children: <SimulationControlPanel />,
+        },
+      ]}
+      onTabClick={key => navigate(`../${key}`)}
+    />
+  );
+};
+
+export const App: FC = () => {
+  return (
+    <Routes>
+      <Route element={<Navigate to="configuration" />} path="/" />
+      <Route element={<AppTabs />} path=":tab/*" />
+    </Routes>
   );
 };
