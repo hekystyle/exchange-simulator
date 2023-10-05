@@ -53,7 +53,7 @@ export class SimulationController {
   }
 
   @Sse('/sse')
-  onFinished(): rx.Observable<MessageEvent> {
+  sse(): rx.Observable<MessageEvent> {
     const tick = rx.fromEvent(this.eventEmitter, TickEvent.ID).pipe(
       rx.filter((event): event is TickEvent => event instanceof TickEvent),
       rx.map((event: TickEvent): MessageEvent => ({ data: event.candle, type: TickEvent.ID })),
