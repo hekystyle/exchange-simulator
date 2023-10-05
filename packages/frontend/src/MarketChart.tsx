@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { Chart } from './components/Chart.jsx';
 import { getBaseApiUrl } from './fetch.js';
 
-const Candle = z.object({
+const candleSchema = z.object({
   timestamp: z
     .string()
     .datetime()
@@ -22,7 +22,12 @@ export const MarketChart = () => {
     const eventSource = new EventSource(new URL('/simulation/sse', getBaseApiUrl()));
     eventSource.onerror = console.error;
     eventSource.addEventListener('simulation.tick', event => {
-      const candle = Candle.parse(JSON.parse(z.string().parse(event.data)));
+      const candle = z
+        .string()
+        .transform<unknown>(v => JSON.parse(v))
+        .pipe(candleSchema)
+        .parse(event.data);
+
       setData(prevData => [
         ...prevData,
         {
