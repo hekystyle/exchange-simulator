@@ -1,7 +1,7 @@
 import { PointOptionsObject } from 'highcharts';
 import { useEffect, useState } from 'react';
 import { z } from 'zod';
-import { Chart } from './Chart.jsx';
+import { Chart } from './components/Chart.jsx';
 import { getBaseApiUrl } from './fetch.js';
 
 const Candle = z.object({

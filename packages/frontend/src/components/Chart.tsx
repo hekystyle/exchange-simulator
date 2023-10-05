@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/extensions
 import Highcharts from 'highcharts/highstock.js';
-// eslint-disable-next-line import/extensions
 import Stock from 'highcharts/modules/stock.js';
 import { HighchartsReact } from 'highcharts-react-official';
 import type { FC } from 'react';
