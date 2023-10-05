@@ -40,10 +40,10 @@ export class SimulationController {
   }
 
   @Post('/start')
-  start(@Body() body: unknown) {
+  async start(@Body() body: unknown) {
     this.logger.debug('Starting simulation');
     const { speed } = z.object({ speed: z.number().int().positive() }).parse(body);
-    this.exchange.start(speed).catch(this.logger.error.bind(this.logger));
+    await this.exchange.start(speed);
   }
 
   @Post('/stop')
