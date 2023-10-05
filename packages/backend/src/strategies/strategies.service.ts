@@ -2,13 +2,13 @@ import { Inject, Injectable, Logger, OnApplicationBootstrap } from '@nestjs/comm
 import rx from 'rxjs';
 import { StrategyDCA } from './strategy-dca.js';
 import { StrategyEnhancedDCA } from './strategy-enhanced-dca.js';
-import { IStrategy } from './strategy.interface.js';
+import { Strategy } from './strategy.interface.js';
 
 @Injectable()
 export class StrategiesService implements OnApplicationBootstrap {
   private readonly logger = new Logger(StrategiesService.name);
 
-  private readonly strategiesMap: Map<string, IStrategy> = new Map();
+  private readonly strategiesMap: Map<string, Strategy> = new Map();
 
   constructor(
     @Inject(StrategyDCA)
@@ -27,11 +27,11 @@ export class StrategiesService implements OnApplicationBootstrap {
     this.strategyEnhancedDCA.setup(1);
   }
 
-  find(): rx.Observable<{ id: string; strategy: IStrategy }> {
+  find(): rx.Observable<{ id: string; strategy: Strategy }> {
     return rx.from(this.strategiesMap.entries()).pipe(rx.map(([id, strategy]) => ({ id, strategy })));
   }
 
-  async findById(id: string): Promise<IStrategy | undefined> {
+  async findById(id: string): Promise<Strategy | undefined> {
     return this.strategiesMap.get(id);
   }
 }

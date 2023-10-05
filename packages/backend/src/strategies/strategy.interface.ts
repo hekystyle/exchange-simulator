@@ -1,4 +1,4 @@
-export interface IStrategy {
+export interface Strategy {
   readonly enabled: boolean;
   enable(): this;
   disable(): this;

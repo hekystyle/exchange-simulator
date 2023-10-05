@@ -11,10 +11,10 @@ import { TradingPair } from '../markets/trading-pair.js';
 import { OrderSide } from '../orders/base-order.js';
 import { Orders } from '../orders/orders.js';
 import { SimulationFinishingEvent } from '../simulated-exchange.js';
-import { IStrategy } from './strategy.interface.js';
+import { Strategy } from './strategy.interface.js';
 
 @Injectable()
-export class StrategyEnhancedDCA implements IStrategy {
+export class StrategyEnhancedDCA implements Strategy {
   private readonly logger = new Logger(StrategyEnhancedDCA.name);
 
   private account: Account | undefined;
