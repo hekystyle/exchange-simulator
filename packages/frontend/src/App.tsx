@@ -1,47 +1,25 @@
 import { useMutation } from '@tanstack/react-query';
 import { Tabs } from 'antd';
 import { FC, Suspense, useState } from 'react';
-import { getBaseApiUrl } from './fetch.js';
 import { MarketChart } from './MarketChart.jsx';
+import * as simulationApiClient from './simulation-api-client.js';
 import { StatsChart } from './StatsChart.jsx';
 import { Strategies } from './Strategies.jsx';
-
-const initSimulation = async (): Promise<void> => {
-  const url = new URL('/simulation/init', getBaseApiUrl());
-  const response = await fetch(url, { method: 'POST' });
-  if (!response.ok) throw new Error(`Failed to init simulation : ${response.statusText}`);
-};
-
-const startSimulation = async (payload: { speed: number }): Promise<void> => {
-  const url = new URL('/simulation/start', getBaseApiUrl());
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-  if (!response.ok) throw new Error(`Failed to start simulation : ${response.statusText}`);
-};
-
-const stopSimulation = async (): Promise<void> => {
-  const url = new URL(`/simulation/stop`, getBaseApiUrl());
-  const response = await fetch(url, { method: 'POST' });
-  if (!response.ok) throw new Error(`Failed to stop simulation : ${response.statusText}`);
-};
 
 export const App: FC = () => {
   const [speed, setSpeed] = useState(50);
 
   const { mutate: mutateStartSimulation, isLoading: isStartingSimulation } = useMutation({
-    mutationFn: startSimulation,
+    mutationFn: simulationApiClient.startSimulation,
   });
 
   const { mutate: mutateInitSimulation, isLoading: isInitializingSimulation } = useMutation({
-    mutationFn: initSimulation,
+    mutationFn: simulationApiClient.initSimulation,
     onSuccess: () => mutateStartSimulation({ speed }),
   });
 
   const { mutate: mutateStopSimulation, isLoading: isStoppingSimulation } = useMutation({
-    mutationFn: stopSimulation,
+    mutationFn: simulationApiClient.stopSimulation,
   });
 
   return (
