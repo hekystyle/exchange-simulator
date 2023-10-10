@@ -43,6 +43,11 @@ export const StrategySwitch = ({ strategy }: { strategy: Strategy }) => {
 
   return (
     <Switch
+      disabled={enableStrategy.isLoading || disableStrategy.isLoading}
+      checked={enabled}
+      checkedChildren={strategy.id}
+      loading={enableStrategy.isLoading || disableStrategy.isLoading}
+      unCheckedChildren={strategy.id}
       onChange={() => {
         if (enabled) {
           disableStrategy.mutate(strategy);
@@ -50,11 +55,6 @@ export const StrategySwitch = ({ strategy }: { strategy: Strategy }) => {
           enableStrategy.mutate(strategy);
         }
       }}
-      disabled={enableStrategy.isLoading || disableStrategy.isLoading}
-      checked={enabled}
-      loading={enableStrategy.isLoading || disableStrategy.isLoading}
-      checkedChildren={strategy.id}
-      unCheckedChildren={strategy.id}
     />
   );
 };

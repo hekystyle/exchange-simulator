@@ -46,12 +46,12 @@ export const App: FC = () => {
         ]}
       />
       <Button
-        type="primary"
-        onClick={() => initSimulation.mutate()}
-        loading={initSimulation.isLoading}
         disabled={
           simulationStatus.isLoading || simulationStatus.data?.initialized || initSimulation.isLoading
         }
+        loading={initSimulation.isLoading}
+        type="primary"
+        onClick={() => initSimulation.mutate()}
       >
         Init simulation
       </Button>

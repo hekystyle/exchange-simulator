@@ -19,19 +19,19 @@ export const Simulation = () => {
   return (
     <>
       <Button
+        disabled={runSimulation.isLoading}
         type="primary"
         onClick={() => runSimulation.mutate({ speed })}
-        disabled={runSimulation.isLoading}
       >
         Run simulation
       </Button>
       <Input
+        style={{ width: 'unset' }}
         type="number"
         value={speed}
-        style={{ width: 'unset' }}
         onChange={e => setSpeed(parseInt(e.target.value, 10))}
       />
-      <Button type="primary" onClick={() => pauseSimulation.mutate()} disabled={pauseSimulation.isLoading}>
+      <Button disabled={pauseSimulation.isLoading} type="primary" onClick={() => pauseSimulation.mutate()}>
         Pause simulation
       </Button>
       <MarketChart />
