@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { Switch } from 'antd';
+import { Switch, notification } from 'antd';
 import { useState } from 'react';
 import { Strategy } from '@app/common';
 import * as strategiesApiClient from './strategies-api-client.js';
@@ -9,12 +9,36 @@ export const StrategySwitch = ({ strategy }: { strategy: Strategy }) => {
 
   const enableStrategy = useMutation({
     mutationFn: strategiesApiClient.enableStrategy,
-    onSuccess: () => setEnabled(true),
+    onSuccess: () => {
+      setEnabled(true);
+      notification.success({
+        key: `strategy-enabled-${strategy.id}`,
+        message: `Strategy ${strategy.id} enabled`,
+      });
+    },
+    onError: error => {
+      notification.error({
+        message: `Failed to enable strategy ${strategy.id}`,
+        description: error instanceof Error ? error.message : undefined,
+      });
+    },
   });
 
   const disableStrategy = useMutation({
     mutationFn: strategiesApiClient.disableStrategy,
-    onSuccess: () => setEnabled(false),
+    onSuccess: () => {
+      setEnabled(false);
+      notification.success({
+        key: `strategy-disabled-${strategy.id}`,
+        message: `Strategy ${strategy.id} disabled`,
+      });
+    },
+    onError: error => {
+      notification.error({
+        message: `Failed to disable strategy ${strategy.id}`,
+        description: error instanceof Error ? error.message : undefined,
+      });
+    },
   });
 
   return (
