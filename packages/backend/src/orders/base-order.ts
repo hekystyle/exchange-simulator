@@ -1,4 +1,3 @@
-// eslint-disable-next-line max-classes-per-file
 import { Decimal } from 'decimal.js';
 import { TradingPair } from '../markets/trading-pair.js';
 import { StrictOmit } from '../utils/StrictOmit.js';
