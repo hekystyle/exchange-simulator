@@ -1,4 +1,3 @@
-/* eslint-disable class-methods-use-this */
 import { createInterface } from 'readline';
 import { Readable, Transform, Writable } from 'stream';
 import { finished } from 'stream/promises';

@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   DefaultValuePipe,
+  Get,
   Logger,
   MessageEvent,
   ParseEnumPipe,
@@ -13,6 +14,7 @@ import {
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import rx from 'rxjs';
 import { z } from 'zod';
+import { SimulationState } from '@app/common';
 import { SimulatedExchange, SimulationFinishedEvent, TickEvent } from './simulated-exchange.js';
 
 @Controller('/simulation')
@@ -23,6 +25,13 @@ export class SimulationController {
     private readonly exchange: SimulatedExchange,
     private readonly eventEmitter: EventEmitter2,
   ) {}
+
+  @Get()
+  async get(): Promise<SimulationState> {
+    return {
+      initialized: this.exchange.initialized,
+    };
+  }
 
   @Post('/init')
   async init(
@@ -39,21 +48,21 @@ export class SimulationController {
     });
   }
 
-  @Post('/start')
-  start(@Body() body: unknown) {
+  @Post('/run')
+  async run(@Body() body: unknown) {
     this.logger.debug('Starting simulation');
     const { speed } = z.object({ speed: z.number().int().positive() }).parse(body);
-    this.exchange.start(speed).catch(this.logger.error.bind(this.logger));
+    await this.exchange.start(speed);
   }
 
-  @Post('/stop')
-  stop() {
+  @Post('/pause')
+  pause() {
     this.logger.debug('Stopping simulation');
-    this.exchange.stop();
+    this.exchange.pause();
   }
 
   @Sse('/sse')
-  onFinished(): rx.Observable<MessageEvent> {
+  sse(): rx.Observable<MessageEvent> {
     const tick = rx.fromEvent(this.eventEmitter, TickEvent.ID).pipe(
       rx.filter((event): event is TickEvent => event instanceof TickEvent),
       rx.map((event: TickEvent): MessageEvent => ({ data: event.candle, type: TickEvent.ID })),

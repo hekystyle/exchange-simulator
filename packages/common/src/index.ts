@@ -31,3 +31,9 @@ export const strategySchema = z.object({
 });
 
 export type Strategy = z.infer<typeof strategySchema>;
+
+export const simulationStateSchema = z.object({
+  initialized: z.boolean(),
+});
+
+export type SimulationState = z.infer<typeof simulationStateSchema>;

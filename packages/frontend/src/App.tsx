@@ -1,72 +1,61 @@
-import { useMutation } from '@tanstack/react-query';
-import { Tabs } from 'antd';
-import { FC, Suspense, useState } from 'react';
-import { getBaseApiUrl } from './fetch.js';
-import { MarketChart } from './MarketChart.jsx';
-import { StatsChart } from './StatsChart.jsx';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Button, Space, Tabs, notification } from 'antd';
+import { FC, Suspense } from 'react';
+import { QUERY_KEYS } from './query-keys.js';
+import * as simulationApiClient from './simulation-api-client.js';
+import { Simulation } from './Simulation.jsx';
 import { Strategies } from './Strategies.jsx';
 
-const initSimulation = async (): Promise<void> => {
-  const url = new URL('/simulation/init', getBaseApiUrl());
-  const response = await fetch(url, { method: 'POST' });
-  if (!response.ok) throw new Error(`Failed to init simulation : ${response.statusText}`);
-};
-
-const startSimulation = async (payload: { speed: number }): Promise<void> => {
-  const url = new URL('/simulation/start', getBaseApiUrl());
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-  if (!response.ok) throw new Error(`Failed to start simulation : ${response.statusText}`);
-};
-
-const stopSimulation = async (): Promise<void> => {
-  const url = new URL(`/simulation/stop`, getBaseApiUrl());
-  const response = await fetch(url, { method: 'POST' });
-  if (!response.ok) throw new Error(`Failed to stop simulation : ${response.statusText}`);
-};
-
 export const App: FC = () => {
-  const [speed, setSpeed] = useState(50);
+  const queryClient = useQueryClient();
 
-  const { mutate: mutateStartSimulation, isLoading: isStartingSimulation } = useMutation({
-    mutationFn: startSimulation,
+  const simulationStatus = useQuery({
+    queryKey: QUERY_KEYS.simulation.all,
+    queryFn: async ({ signal }) => await simulationApiClient.getState(signal),
   });
 
-  const { mutate: mutateInitSimulation, isLoading: isInitializingSimulation } = useMutation({
-    mutationFn: initSimulation,
-    onSuccess: () => mutateStartSimulation({ speed }),
-  });
-
-  const { mutate: mutateStopSimulation, isLoading: isStoppingSimulation } = useMutation({
-    mutationFn: stopSimulation,
+  const initSimulation = useMutation({
+    mutationFn: simulationApiClient.initSimulation,
+    onSuccess: () => {
+      queryClient.invalidateQueries(QUERY_KEYS.simulation.all).catch(console.error);
+      notification.success({
+        message: 'Simulation initialized',
+      });
+    },
+    onError: error => {
+      notification.error({
+        message: 'Failed to initialize simulation',
+        description: error instanceof Error ? error.message : undefined,
+      });
+    },
   });
 
   return (
-    <>
-      <Tabs>
-        <Tabs.TabPane tab="Strategies" key="market">
-          <Suspense fallback="Loading...">
-            <Strategies />
-          </Suspense>
-        </Tabs.TabPane>
-      </Tabs>
-      <button type="button" onClick={() => mutateInitSimulation()} disabled={isInitializingSimulation}>
+    <Space direction="vertical" style={{ width: '100%' }}>
+      <Tabs
+        items={[
+          {
+            key: 'strategies',
+            label: 'Strategies',
+            children: (
+              <Suspense fallback="Loading...">
+                <Strategies />
+              </Suspense>
+            ),
+          },
+        ]}
+      />
+      <Button
+        disabled={
+          simulationStatus.isLoading || simulationStatus.data?.initialized || initSimulation.isLoading
+        }
+        loading={initSimulation.isLoading}
+        type="primary"
+        onClick={() => initSimulation.mutate()}
+      >
         Init simulation
-      </button>
-      <button type="button" onClick={() => mutateStartSimulation({ speed })} disabled={isStartingSimulation}>
-        Start simulation
-      </button>
-      <input type="number" value={speed} onChange={e => setSpeed(parseInt(e.target.value, 10))} />
-      <button type="button" onClick={() => mutateStopSimulation()} disabled={isStoppingSimulation}>
-        Stop simulation
-      </button>
-      <MarketChart />
-      <Suspense fallback="Loading...">
-        <StatsChart />
-      </Suspense>
-    </>
+      </Button>
+      <Simulation />
+    </Space>
   );
 };

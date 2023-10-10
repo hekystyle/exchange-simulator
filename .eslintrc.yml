@@ -64,6 +64,16 @@ rules:
     - error
     - namedComponents: arrow-function
       unnamedComponents: arrow-function
+  react/boolean-prop-naming: error
+  react/jsx-sort-props:
+    - error
+    - ignoreCase: true
+      callbacksLast: true
+      shorthandFirst: true
+      shorthandLast: false
+      noSortAlphabetically: false
+      reservedFirst: true
+
 overrides:
   - files:
       - packages/*/tests/*.ts

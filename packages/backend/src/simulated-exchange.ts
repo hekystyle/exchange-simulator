@@ -57,6 +57,10 @@ export class SimulatedExchange {
     private readonly database: PrismaClient,
   ) {}
 
+  get initialized() {
+    return !!this.session;
+  }
+
   async init(config: InitSessionConfig) {
     assert(!this.session, 'Simulation already initialized');
 
@@ -117,10 +121,10 @@ export class SimulatedExchange {
     this.eventEmitter.emit(SimulationFinishedEvent.ID, new SimulationFinishedEvent(this));
   }
 
-  stop() {
+  pause() {
     assert(this.session, 'Simulation not started');
 
-    this.abortController?.abort('Simulation stopped by user');
+    this.abortController?.abort('Simulation paused by user');
     this.abortController = undefined;
   }
 }

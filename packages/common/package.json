@@ -15,8 +15,8 @@
     "url": "git+https://github.com/hekystyle/exchange-simulator.git"
   },
   "scripts": {
-    "build": "tsc -b ./tsconfig.json",
-    "dev": "tsc -b ./tsconfig.json --watch"
+    "start": "tsc -b ./tsconfig.json --watch --preserveWatchOutput",
+    "build": "tsc -b ./tsconfig.json"
   },
   "bugs": {
     "url": "https://github.com/hekystyle/exchange-simulator/issues"

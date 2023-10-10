@@ -1,50 +1,60 @@
 import { useMutation } from '@tanstack/react-query';
-import { Switch } from 'antd';
+import { Switch, notification } from 'antd';
 import { useState } from 'react';
 import { Strategy } from '@app/common';
-import { getBaseApiUrl } from './fetch.js';
-
-const enableStrategy = async ({ id }: Strategy): Promise<void> => {
-  const url = new URL(`/strategies/enable`, getBaseApiUrl());
-  url.searchParams.append('id', id);
-  const response = await fetch(url, { method: 'PUT' });
-  if (!response.ok) throw new Error(`Failed to enable strategy : ${response.statusText}`);
-};
-
-const disableStrategy = async ({ id }: Strategy): Promise<void> => {
-  const url = new URL(`/strategies/disable`, getBaseApiUrl());
-  url.searchParams.append('id', id);
-  const response = await fetch(url, { method: 'PUT' });
-  if (!response.ok) throw new Error(`Failed to disable strategy : ${response.statusText}`);
-};
+import * as strategiesApiClient from './strategies-api-client.js';
 
 export const StrategySwitch = ({ strategy }: { strategy: Strategy }) => {
   const [enabled, setEnabled] = useState(strategy.enabled);
 
-  const { mutate: mutateEnableStrategy, isLoading: isEnablingStrategy } = useMutation({
-    mutationFn: enableStrategy,
-    onSuccess: () => setEnabled(true),
+  const enableStrategy = useMutation({
+    mutationFn: strategiesApiClient.enableStrategy,
+    onSuccess: () => {
+      setEnabled(true);
+      notification.success({
+        key: `strategy-enabled-${strategy.id}`,
+        message: `Strategy ${strategy.id} enabled`,
+      });
+    },
+    onError: error => {
+      notification.error({
+        message: `Failed to enable strategy ${strategy.id}`,
+        description: error instanceof Error ? error.message : undefined,
+      });
+    },
   });
 
-  const { mutate: mutateDisableStrategy, isLoading: isDisablingStrategy } = useMutation({
-    mutationFn: disableStrategy,
-    onSuccess: () => setEnabled(false),
+  const disableStrategy = useMutation({
+    mutationFn: strategiesApiClient.disableStrategy,
+    onSuccess: () => {
+      setEnabled(false);
+      notification.success({
+        key: `strategy-disabled-${strategy.id}`,
+        message: `Strategy ${strategy.id} disabled`,
+      });
+    },
+    onError: error => {
+      notification.error({
+        message: `Failed to disable strategy ${strategy.id}`,
+        description: error instanceof Error ? error.message : undefined,
+      });
+    },
   });
 
   return (
     <Switch
+      disabled={enableStrategy.isLoading || disableStrategy.isLoading}
+      checked={enabled}
+      checkedChildren={strategy.id}
+      loading={enableStrategy.isLoading || disableStrategy.isLoading}
+      unCheckedChildren={strategy.id}
       onChange={() => {
         if (enabled) {
-          mutateDisableStrategy(strategy);
+          disableStrategy.mutate(strategy);
         } else {
-          mutateEnableStrategy(strategy);
+          enableStrategy.mutate(strategy);
         }
       }}
-      disabled={isEnablingStrategy || isDisablingStrategy}
-      checked={enabled}
-      loading={isEnablingStrategy || isDisablingStrategy}
-      checkedChildren={strategy.id}
-      unCheckedChildren={strategy.id}
     />
   );
 };
