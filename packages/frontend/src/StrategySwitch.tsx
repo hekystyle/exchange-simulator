@@ -7,12 +7,12 @@ import * as strategiesApiClient from './strategies-api-client.js';
 export const StrategySwitch = ({ strategy }: { strategy: Strategy }) => {
   const [enabled, setEnabled] = useState(strategy.enabled);
 
-  const { mutate: mutateEnableStrategy, isLoading: isEnablingStrategy } = useMutation({
+  const enableStrategy = useMutation({
     mutationFn: strategiesApiClient.enableStrategy,
     onSuccess: () => setEnabled(true),
   });
 
-  const { mutate: mutateDisableStrategy, isLoading: isDisablingStrategy } = useMutation({
+  const disableStrategy = useMutation({
     mutationFn: strategiesApiClient.disableStrategy,
     onSuccess: () => setEnabled(false),
   });
@@ -21,14 +21,14 @@ export const StrategySwitch = ({ strategy }: { strategy: Strategy }) => {
     <Switch
       onChange={() => {
         if (enabled) {
-          mutateDisableStrategy(strategy);
+          disableStrategy.mutate(strategy);
         } else {
-          mutateEnableStrategy(strategy);
+          enableStrategy.mutate(strategy);
         }
       }}
-      disabled={isEnablingStrategy || isDisablingStrategy}
+      disabled={enableStrategy.isLoading || disableStrategy.isLoading}
       checked={enabled}
-      loading={isEnablingStrategy || isDisablingStrategy}
+      loading={enableStrategy.isLoading || disableStrategy.isLoading}
       checkedChildren={strategy.id}
       unCheckedChildren={strategy.id}
     />
