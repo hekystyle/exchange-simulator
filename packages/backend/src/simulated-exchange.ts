@@ -57,6 +57,10 @@ export class SimulatedExchange {
     private readonly database: PrismaClient,
   ) {}
 
+  get initialized() {
+    return !!this.session;
+  }
+
   async init(config: InitSessionConfig) {
     assert(!this.session, 'Simulation already initialized');
 

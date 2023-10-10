@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   DefaultValuePipe,
+  Get,
   Logger,
   MessageEvent,
   ParseEnumPipe,
@@ -23,6 +24,13 @@ export class SimulationController {
     private readonly exchange: SimulatedExchange,
     private readonly eventEmitter: EventEmitter2,
   ) {}
+
+  @Get()
+  async get() {
+    return {
+      initialized: this.exchange.initialized,
+    };
+  }
 
   @Post('/init')
   async init(
