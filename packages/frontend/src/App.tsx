@@ -6,13 +6,19 @@ import { Strategies } from './Strategies.jsx';
 export const App: FC = () => {
   return (
     <>
-      <Tabs>
-        <Tabs.TabPane tab="Strategies" key="market">
-          <Suspense fallback="Loading...">
-            <Strategies />
-          </Suspense>
-        </Tabs.TabPane>
-      </Tabs>
+      <Tabs
+        items={[
+          {
+            key: 'strategies',
+            label: 'Strategies',
+            children: (
+              <Suspense fallback="Loading...">
+                <Strategies />
+              </Suspense>
+            ),
+          },
+        ]}
+      />
       <Simulation />
     </>
   );
