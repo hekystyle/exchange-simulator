@@ -16,7 +16,7 @@
   ],
   "scripts": {
     "build": "lerna run build",
-    "start": "lerna run start",
+    "start": "lerna run start --parallel --stream",
     "check-types": "lerna run check-types",
     "lint": "eslint --report-unused-disable-directives .",
     "lint:fix": "eslint --report-unused-disable-directives --fix .",
