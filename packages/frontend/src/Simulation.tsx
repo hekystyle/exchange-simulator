@@ -11,19 +11,11 @@ export const Simulation = () => {
     mutationFn: simulationApiClient.startSimulation,
   });
 
-  const { mutate: mutateInitSimulation, isLoading: isInitializingSimulation } = useMutation({
-    mutationFn: simulationApiClient.initSimulation,
-    onSuccess: () => mutateStartSimulation({ speed }),
-  });
-
   const { mutate: mutateStopSimulation, isLoading: isStoppingSimulation } = useMutation({
     mutationFn: simulationApiClient.stopSimulation,
   });
   return (
     <>
-      <button type="button" onClick={() => mutateInitSimulation()} disabled={isInitializingSimulation}>
-        Init simulation
-      </button>
       <button type="button" onClick={() => mutateStartSimulation({ speed })} disabled={isStartingSimulation}>
         Start simulation
       </button>
