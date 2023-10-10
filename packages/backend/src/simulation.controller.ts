@@ -14,6 +14,7 @@ import {
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import rx from 'rxjs';
 import { z } from 'zod';
+import { SimulationState } from '@app/common';
 import { SimulatedExchange, SimulationFinishedEvent, TickEvent } from './simulated-exchange.js';
 
 @Controller('/simulation')
@@ -26,7 +27,7 @@ export class SimulationController {
   ) {}
 
   @Get()
-  async get() {
+  async get(): Promise<SimulationState> {
     return {
       initialized: this.exchange.initialized,
     };
