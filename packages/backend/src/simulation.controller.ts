@@ -48,17 +48,17 @@ export class SimulationController {
     });
   }
 
-  @Post('/start')
-  async start(@Body() body: unknown) {
+  @Post('/run')
+  async run(@Body() body: unknown) {
     this.logger.debug('Starting simulation');
     const { speed } = z.object({ speed: z.number().int().positive() }).parse(body);
     await this.exchange.start(speed);
   }
 
-  @Post('/stop')
-  stop() {
+  @Post('/pause')
+  pause() {
     this.logger.debug('Stopping simulation');
-    this.exchange.stop();
+    this.exchange.pause();
   }
 
   @Sse('/sse')

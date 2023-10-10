@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { Button, Input } from 'antd';
 import { Suspense, useState } from 'react';
 import { MarketChart } from './MarketChart.jsx';
 import * as simulationApiClient from './simulation-api-client.js';
@@ -7,22 +8,32 @@ import { StatsChart } from './StatsChart.jsx';
 export const Simulation = () => {
   const [speed, setSpeed] = useState(50);
 
-  const { mutate: mutateStartSimulation, isLoading: isStartingSimulation } = useMutation({
-    mutationFn: simulationApiClient.startSimulation,
+  const runSimulation = useMutation({
+    mutationFn: simulationApiClient.runSimulation,
   });
 
-  const { mutate: mutateStopSimulation, isLoading: isStoppingSimulation } = useMutation({
-    mutationFn: simulationApiClient.stopSimulation,
+  const pauseSimulation = useMutation({
+    mutationFn: simulationApiClient.pauseSimulation,
   });
+
   return (
     <>
-      <button type="button" onClick={() => mutateStartSimulation({ speed })} disabled={isStartingSimulation}>
-        Start simulation
-      </button>
-      <input type="number" value={speed} onChange={e => setSpeed(parseInt(e.target.value, 10))} />
-      <button type="button" onClick={() => mutateStopSimulation()} disabled={isStoppingSimulation}>
-        Stop simulation
-      </button>
+      <Button
+        type="primary"
+        onClick={() => runSimulation.mutate({ speed })}
+        disabled={runSimulation.isLoading}
+      >
+        Run simulation
+      </Button>
+      <Input
+        type="number"
+        value={speed}
+        style={{ width: 'unset' }}
+        onChange={e => setSpeed(parseInt(e.target.value, 10))}
+      />
+      <Button type="primary" onClick={() => pauseSimulation.mutate()} disabled={pauseSimulation.isLoading}>
+        Pause simulation
+      </Button>
       <MarketChart />
       <Suspense fallback="Loading...">
         <StatsChart />
