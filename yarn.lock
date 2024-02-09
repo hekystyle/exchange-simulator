@@ -173,7 +173,7 @@ __metadata:
     "@nestjs/cli": 10.1.11
     "@nestjs/common": 10.1.3
     "@nestjs/core": 10.1.3
-    "@nestjs/event-emitter": 2.0.1
+    "@nestjs/event-emitter": 2.0.4
     "@nestjs/platform-express": 10.1.3
     "@nestjs/schematics": 10.0.2
     "@nestjs/testing": 10.1.3
@@ -1735,16 +1735,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/event-emitter@npm:2.0.1":
-  version: 2.0.1
-  resolution: "@nestjs/event-emitter@npm:2.0.1"
+"@nestjs/event-emitter@npm:2.0.4":
+  version: 2.0.4
+  resolution: "@nestjs/event-emitter@npm:2.0.4"
   dependencies:
     eventemitter2: 6.4.9
   peerDependencies:
     "@nestjs/common": ^8.0.0 || ^9.0.0 || ^10.0.0
     "@nestjs/core": ^8.0.0 || ^9.0.0 || ^10.0.0
-    reflect-metadata: ^0.1.12
-  checksum: b5a2b93b095db26ee16bf8e67eb04d7457fdb03811e61d015cef9dc10cb8b4a333773e4e18868f6dc0dbc52c52a0fb17ab0473a79ce86e7b6c769e98822b1eec
+  checksum: 36c7dbc4ed3c452d149a489d1c8bc0bd70a1c4d11fada43f9b2197dc5190ccebe0d4d29447443afbdb9d4b12b7d5df5ce6217d6e1b64b428f32a8cb9b8b23041
   languageName: node
   linkType: hard
 
