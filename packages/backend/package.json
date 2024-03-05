@@ -6,7 +6,7 @@
   "repository": "git@github.com:hekystyle/exchange-simulator.git",
   "author": "Tomáš Heky Hekrla <tomas@heky.eu>",
   "license": "MIT",
-  "packageManager": "yarn@3.5.0",
+  "packageManager": "yarn@3.8.1",
   "engines": {
     "node": "^18.0.0"
   },
